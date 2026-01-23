@@ -299,7 +299,7 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
               <button
                 onClick={handleSubmitTask}
                 disabled={loading || (!imageData && !videoData)}
-                className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 neon-glow neon-glow-hover active:scale-[0.98] disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:neon-glow-0"
+                className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 neon-glow neon-glow-hover active:scale-[0.98] disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:neon-glow-0"
               >
                 {loading && loadingMessage ? (
                   <>
@@ -309,7 +309,9 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
                     </svg>
                     {loadingMessage}
                   </>
-                ) : null}
+                ) : (
+                  'Generate'
+                )}
               </button>
               <button
                 onClick={handleReset}
