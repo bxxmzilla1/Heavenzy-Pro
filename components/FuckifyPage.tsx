@@ -294,14 +294,14 @@ export const FuckifyPage: React.FC = () => {
                       disabled={isGenerateDisabled}
                       className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:cursor-not-allowed disabled:shadow-none"
                     >
-                      <i className="fas fa-magic bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"></i>
+                      <i className="fas fa-magic text-white"></i>
                       <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Generate Edit</span>
                     </button>
                     <button
                       onClick={handleReset}
                       className="w-full md:w-auto px-6 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gray-700 hover:bg-gray-600"
                     >
-                      <i className="fas fa-redo bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"></i>
+                      <i className="fas fa-redo text-white"></i>
                       <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Reset</span>
                     </button>
                   </div>
