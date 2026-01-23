@@ -6,13 +6,11 @@ import { PromptControls } from './components/PromptControls';
 import { ImageDisplay } from './components/ImageDisplay';
 import { editImageWithPrompt, editImageWithPromptOnly, editImageWithMultiplePeople } from './services/geminiService';
 import { fileToBase64, blobToBase64 } from './utils/fileUtils';
-import { isAIStudioEnvironment } from './services/apiKeyService';
 import type { UploadedImage, AspectRatio, HistoryItem, EditMode } from './types';
 import { saveHistoryItemToDb, getHistoryFromDb } from './utils/storageUtils';
 import { HistorySidebar } from './components/HistorySidebar';
 import { MinusCircleIcon } from './components/IconComponents';
 import { CreatorSettingsModal } from './components/CreatorSettingsModal';
-import { ApiKeySelector } from './components/ApiKeySelector';
 
 const App: React.FC = () => {
   // Generator State
@@ -29,24 +27,6 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<EditMode>('reference');
   const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isKeyReady, setIsKeyReady] = useState(false);
-
-  // Check for API key readiness when the app loads
-  useEffect(() => {
-    const checkKey = async () => {
-      // This gating is primarily for the AI Studio environment.
-      // In other environments, we'll rely on the settings modal.
-      if (isAIStudioEnvironment() && window.aistudio) {
-        const hasKey = await window.aistudio.hasSelectedApiKey();
-        setIsKeyReady(hasKey);
-      } else {
-        // For non-aistudio, we'll assume a key is present via settings/env.
-        // The app will show an error on generation failure if it's not.
-        setIsKeyReady(true);
-      }
-    };
-    checkKey();
-  }, []);
 
   // Load history from IndexedDB on initial load
   useEffect(() => {
@@ -281,14 +261,8 @@ const App: React.FC = () => {
         const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
         console.error(err);
 
-        // Specific check for AI Studio key invalidation from the error service
-        if (isAIStudioEnvironment() && errorMessage.includes('Requested entity was not found')) {
-            setError('Your selected API key is no longer valid. Please select a new one to continue.');
-            setIsKeyReady(false); // This will show the ApiKeySelector again
-        } else {
-            // Display the refined error message from the service layer.
-            setError(errorMessage);
-        }
+        // Display the refined error message from the service layer.
+        setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -300,15 +274,6 @@ const App: React.FC = () => {
     setAspectRatio(item.aspectRatio);
     setError(null);
   }, []);
-
-  if (!isKeyReady) {
-    // This view gates the app until a valid key is selected in AI Studio.
-    return (
-      <div className="min-h-screen bg-[#020408] flex items-center justify-center p-6">
-          <ApiKeySelector onKeySelected={() => setIsKeyReady(true)} />
-      </div>
-    );
-  }
   
   const originalImageDataUrl = originalImage
     ? `data:${originalImage.mimeType};base64,${originalImage.base64}`
