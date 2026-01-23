@@ -76,17 +76,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                     placeholder="Enter your Wavespeed API key"
                     className="w-full bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-300"
                 />
-            </div>
-             <div>
-                <label className="block mb-2 text-sm font-medium text-gray-300">Gemini API Key</label>
-                <input
-                    type="password"
-                    value={geminiKey}
-                    onChange={(e) => setGeminiKey(e.target.value)}
-                    placeholder="Enter your Gemini API key"
-                    className="w-full bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-300"
-                />
-                <p className="text-xs text-gray-500 mt-2">Required for all Gemini AI features including Stage Creator, image analysis, and content generation.</p>
+                <p className="text-xs text-gray-500 mt-2">Required for video generation features including Mirror Mode, Video Creator, and motion control. Get your API key from <a href="https://wavespeed.ai" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline">Wavespeed.ai</a>.</p>
             </div>
             <div>
                 <label className="block mb-2 text-sm font-medium text-gray-300">ElevenLabs API Key</label>
@@ -97,7 +87,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, onSave }
                     placeholder="Enter your ElevenLabs API key"
                     className="w-full bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-300"
                 />
-                <p className="text-xs text-gray-500 mt-2">Required for Voice Cloner features. Create an API key in the <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline">ElevenLabs dashboard</a>.</p>
+                <p className="text-xs text-gray-500 mt-2">Required for Voice Cloner, Text-to-Speech, and Voice Changer features. Create an API key in the <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline">ElevenLabs dashboard</a>.</p>
+            </div>
+            <div>
+                <label className="block mb-2 text-sm font-medium text-gray-300">Gemini API Key</label>
+                <input
+                    type="password"
+                    value={geminiKey}
+                    onChange={(e) => setGeminiKey(e.target.value)}
+                    placeholder="Enter your Gemini API key"
+                    className="w-full bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-300"
+                />
+                <p className="text-xs text-gray-500 mt-2">Required for all Gemini AI features including Stage Creator, image analysis, script generation, and content generation. Get your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline">Google AI Studio</a>.</p>
             </div>
             <div>
                 <label className="block mb-2 text-sm font-medium text-gray-300">Kie.ai API Key</label>
