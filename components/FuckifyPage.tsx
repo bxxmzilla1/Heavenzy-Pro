@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import FuckifySidebar from './FuckifySidebar';
-import { ImageMode, VideoMode, EditMode, TransformMode } from './FuckifyModes';
+import { ImageMode, VideoMode } from './FuckifyModes';
 
 interface Prediction {
   id: string;
@@ -590,8 +590,6 @@ export const FuckifyPage: React.FC = () => {
               onPulseHistoryButton={handlePulseHistoryButton}
             />
           )}
-          {activeMenu === 'editMode' && <EditMode />}
-          {activeMenu === 'transformMode' && <TransformMode />}
         </div>
       </div>
     </div>

@@ -9,8 +9,6 @@ const FuckifySidebar: React.FC<FuckifySidebarProps> = ({ activeMenu, onMenuChang
   const menuItems = [
     { id: 'imageMode', name: 'Image Mode', icon: 'fa-image', iconType: 'fa' as const },
     { id: 'videoMode', name: 'Video Mode', icon: 'fa-video', iconType: 'fa' as const },
-    { id: 'editMode', name: 'Edit Mode', icon: 'fa-edit', iconType: 'fa' as const },
-    { id: 'transformMode', name: 'Transform Mode', icon: 'fa-magic', iconType: 'fa' as const },
   ];
 
   const handleClick = (e: React.MouseEvent, menuId: string) => {
