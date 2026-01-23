@@ -46,7 +46,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   };
 
   return (
-    <div className="w-full bg-[#020408] text-gray-100">
+    <div className="min-h-screen bg-[#020408] text-gray-100 pt-20">
       <div className="container mx-auto p-4 md:p-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-400 via-purple-400 to-teal-400 bg-clip-text text-transparent mb-2">
