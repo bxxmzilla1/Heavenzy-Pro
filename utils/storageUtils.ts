@@ -235,3 +235,19 @@ export const getPasswordFromDb = async (): Promise<string | null> => {
     return null;
   }
 };
+
+export const deletePasswordFromDb = async (): Promise<void> => {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(PASSWORD_STORE, 'readwrite');
+    const store = tx.objectStore(PASSWORD_STORE);
+    store.delete('app_password');
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch (error) {
+    console.error('Failed to delete password from IndexedDB:', error);
+    throw error;
+  }
+};

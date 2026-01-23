@@ -348,7 +348,7 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
         <div className="pl-24">
-          <SettingsPage />
+          <SettingsPage onLogout={() => setIsAuthenticated(false)} />
         </div>
       </div>
     );
