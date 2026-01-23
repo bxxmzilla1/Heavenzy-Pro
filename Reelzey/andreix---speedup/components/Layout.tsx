@@ -107,7 +107,7 @@ const Layout: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
             <a href="#" onClick={(e) => { e.preventDefault(); setActiveMenu('directorMode'); setActiveView('scriptCreator'); }} className="flex items-center">
-              <span className="self-center text-xl font-semibold whitespace-nowrap gradient-text">Reelzey</span>
+              <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-purple-400 via-purple-500 to-purple-400 bg-clip-text text-transparent">Reelzey</span>
             </a>
             <div className="p-2 rounded-full text-gray-400 bg-gray-800/50 flex items-center text-sm h-9 px-3">
               <i className="fas fa-wallet mr-2 text-purple-400"></i>
