@@ -422,9 +422,9 @@ export const FuckifyPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020408] text-gray-100">
+    <div className="min-h-screen bg-black text-gray-100">
       {/* Header */}
-      <header className="w-full px-2 sm:px-6 lg:px-8 bg-[#020408] backdrop-blur-sm border-b border-pink-500/20 fixed top-0 left-24 right-0 z-50 h-16">
+      <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-pink-500/20 fixed top-0 left-24 right-0 z-50 h-16">
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
