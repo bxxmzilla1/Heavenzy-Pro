@@ -294,8 +294,8 @@ export const FuckifyPage: React.FC = () => {
                       disabled={isGenerateDisabled}
                       className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
                     >
-                      <i className="fas fa-magic"></i>
-                      Generate Edit
+                      <i className="fas fa-magic text-white"></i>
+                      <span className="text-white">Generate Edit</span>
                     </button>
                     <button
                       onClick={handleReset}
