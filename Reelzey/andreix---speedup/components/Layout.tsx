@@ -4,7 +4,6 @@ import Tabs from './Sidebar';
 import SidebarMenu from './SidebarMenu';
 import App from '../App';
 import VideoCreator from './VideoCreator';
-import SettingsModal from './SettingsModal';
 import ScriptCreator from './ScriptCreator';
 import HistorySidebar from './HistorySidebar';
 import MirrorMode from './MirrorMode';
@@ -17,7 +16,6 @@ import SpeechMode from './SpeechMode';
 const Layout: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('directorMode');
   const [activeView, setActiveView] = useState('scriptCreator');
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
   const [selectedHistoryVideoUrl, setSelectedHistoryVideoUrl] = useState<string | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
@@ -139,14 +137,10 @@ const Layout: React.FC = () => {
             >
               <i className="fas fa-history text-lg sm:text-xl"></i>
             </button>
-            <button onClick={() => setIsSettingsOpen(true)} className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition-colors" title="Settings">
-              <i className="fas fa-cog text-lg sm:text-xl"></i>
-            </button>
           </div>
         </div>
       </header>
       
-      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} onSave={fetchBalance} />
       {isHistoryVisible && (
         <HistorySidebar
           onSelectVideo={handleSelectHistoryVideo}
@@ -157,13 +151,7 @@ const Layout: React.FC = () => {
       {/* Sidebar Menu - Left on desktop, Footer on mobile */}
       <SidebarMenu 
         activeMenu={activeMenu} 
-        onMenuChange={(menuId) => {
-          if (menuId === 'settings') {
-            setIsSettingsOpen(true);
-          } else {
-            setActiveMenu(menuId);
-          }
-        }} 
+        onMenuChange={setActiveMenu} 
       />
 
       {/* Main Content Area - Adjusted for sidebar/footer and main app left sidebar */}
@@ -242,7 +230,6 @@ const Layout: React.FC = () => {
           )}
           {activeMenu === 'mirrorMode' && (
             <MirrorMode 
-              onOpenSettings={() => setIsSettingsOpen(true)}
               onPulseHistoryButton={handlePulseHistoryButton}
               selectedHistoryVideoUrl={selectedHistoryVideoUrl}
               clearSelectedHistoryVideoUrl={() => setSelectedHistoryVideoUrl(null)}
@@ -252,24 +239,16 @@ const Layout: React.FC = () => {
             <App />
           )}
           {activeMenu === 'voiceCloner' && (
-            <VoiceCloner 
-              onOpenSettings={() => setIsSettingsOpen(true)}
-            />
+            <VoiceCloner />
           )}
           {activeMenu === 'textToSpeech' && (
-            <TextToSpeech 
-              onOpenSettings={() => setIsSettingsOpen(true)}
-            />
+            <TextToSpeech />
           )}
           {activeMenu === 'voiceChanger' && (
-            <VoiceChanger 
-              onOpenSettings={() => setIsSettingsOpen(true)}
-            />
+            <VoiceChanger />
           )}
           {activeMenu === 'speechMode' && (
-            <SpeechMode 
-              onOpenSettings={() => setIsSettingsOpen(true)}
-            />
+            <SpeechMode />
           )}
           {activeMenu === 'voiceActors' && (
             <VoiceActors />
