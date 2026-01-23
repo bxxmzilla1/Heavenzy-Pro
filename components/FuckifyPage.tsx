@@ -10,8 +10,6 @@ interface ImageData {
 export const FuckifyPage: React.FC = () => {
   const [images, setImages] = useState<ImageData[]>([]);
   const [prompt, setPrompt] = useState('');
-  const [enablePromptExpansion, setEnablePromptExpansion] = useState(false);
-  const [seed, setSeed] = useState<number>(-1);
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
@@ -32,8 +30,6 @@ export const FuckifyPage: React.FC = () => {
   const handleReset = () => {
     setImages([]);
     setPrompt('');
-    setEnablePromptExpansion(false);
-    setSeed(-1);
     setImageUrlInput('');
     setLoading(false);
     setLoadingMessage('');
@@ -111,9 +107,9 @@ export const FuckifyPage: React.FC = () => {
       });
 
       const requestBody: any = {
-        enable_prompt_expansion: enablePromptExpansion,
+        enable_prompt_expansion: false,
         images: imageArray,
-        seed: seed === -1 ? -1 : seed,
+        seed: -1,
       };
 
       // Only add prompt if provided
@@ -329,37 +325,6 @@ export const FuckifyPage: React.FC = () => {
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
                     />
-                  </div>
-
-                  {/* Options Section */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={enablePromptExpansion}
-                          onChange={(e) => setEnablePromptExpansion(e.target.checked)}
-                          className="w-5 h-5 rounded border-gray-600 bg-black/40 text-pink-600 focus:ring-pink-500 focus:ring-offset-0"
-                        />
-                        <span className="text-sm font-medium text-gray-300">Enable Prompt Expansion</span>
-                      </label>
-                      <p className="text-xs text-gray-500 mt-1 ml-8">Enable the prompt optimizer for better results</p>
-                    </div>
-
-                    <div>
-                      <label className="block mb-2 text-sm font-medium text-gray-300">Seed</label>
-                      <input
-                        type="number"
-                        value={seed === -1 ? '' : seed}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setSeed(value === '' ? -1 : parseInt(value, 10));
-                        }}
-                        placeholder="-1 (random)"
-                        className="w-full bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 placeholder-gray-500"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">-1 means a random seed will be used</p>
-                    </div>
                   </div>
 
                   {/* Action Buttons */}
