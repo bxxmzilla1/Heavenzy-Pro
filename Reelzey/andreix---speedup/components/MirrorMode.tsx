@@ -13,7 +13,8 @@ interface MirrorModeProps {
 const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryButton, selectedHistoryVideoUrl, clearSelectedHistoryVideoUrl }) => {
   const [imageData, setImageData] = useState<FileData | null>(null);
   const [videoData, setVideoData] = useState<FileData | null>(null);
-  const [characterOrientation, setCharacterOrientation] = useState<'video' | 'image'>('video');
+  // Character orientation is always 'video' - no longer user-configurable
+  const characterOrientation: 'video' | 'image' = 'video';
   const [keepOriginalSound, setKeepOriginalSound] = useState(true);
   const [requestId, setRequestId] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -190,7 +191,7 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
   const handleReset = () => {
     setImageData(null);
     setVideoData(null);
-    setCharacterOrientation('video');
+    // characterOrientation is always 'video'
     setKeepOriginalSound(true);
     setRequestId('');
     setLoading(false);
@@ -265,33 +266,6 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
           </h2>
 
           <div className="flex flex-col gap-6">
-            {/* Character Orientation */}
-            <div>
-              <label className="block text-sm font-semibold mb-3 text-gray-300">Character Orientation</label>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setCharacterOrientation('video')}
-                  className={`px-6 py-3 rounded-xl font-semibold transition-all ${
-                    characterOrientation === 'video'
-                      ? 'bg-purple-600 text-white neon-glow'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  <i className="fas fa-video mr-2"></i>Video
-                </button>
-                <button
-                  onClick={() => setCharacterOrientation('image')}
-                  className={`px-6 py-3 rounded-xl font-semibold transition-all ${
-                    characterOrientation === 'image'
-                      ? 'bg-purple-600 text-white neon-glow'
-                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                  }`}
-                >
-                  <i className="fas fa-image mr-2"></i>Image
-                </button>
-              </div>
-            </div>
-
             {/* Image Upload */}
             <div>
               <label className="block text-sm font-semibold mb-3 text-gray-300">Image</label>
