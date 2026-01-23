@@ -19,7 +19,6 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ activeMenu, onMenuChange }) =
     { id: 'stageCreator', name: 'Stage Creator', icon: 'fa-theater-masks', iconType: 'fa' as const },
     { id: 'directorMode', name: 'Director Mode', icon: 'fa-video', iconType: 'fa' as const },
     { id: 'mirrorMode', name: 'Mirror Mode', icon: 'mirror', iconType: 'svg' as const },
-    { id: 'speechMode', name: 'Speech Mode', icon: 'fa-comments', iconType: 'fa' as const },
   ];
 
   const handleClick = (e: React.MouseEvent, menuId: string) => {
