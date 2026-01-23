@@ -110,7 +110,7 @@ const Layout: React.FC = () => {
     <div className="min-h-screen bg-black">
       <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-purple-500/20 fixed top-0 left-24 right-0 z-40">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <a href="#" onClick={(e) => { e.preventDefault(); setActiveMenu('directorMode'); setActiveView('scriptCreator'); }} className="flex items-center">
               <span className="self-center text-xl font-semibold whitespace-nowrap gradient-text">Reelzey</span>
             </a>
@@ -128,14 +128,15 @@ const Layout: React.FC = () => {
             </div>
             <button 
               onClick={() => setIsHistoryVisible(true)} 
-              className={`p-2 rounded-full transition-colors relative ${
+              className={`p-2 rounded-lg transition-colors relative flex items-center gap-2 ${
                 isHistoryButtonPulsing 
                   ? 'text-purple-400 bg-purple-500/20 pulse-highlight' 
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                  : 'text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800/50'
               }`}
               title="Generation History"
             >
-              <i className="fas fa-history text-lg sm:text-xl"></i>
+              <i className="fas fa-history text-base"></i>
+              <span className="text-xs font-medium hidden sm:inline">History</span>
             </button>
           </div>
         </div>
