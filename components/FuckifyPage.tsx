@@ -10,7 +10,6 @@ interface ImageData {
 export const FuckifyPage: React.FC = () => {
   const [images, setImages] = useState<ImageData[]>([]);
   const [prompt, setPrompt] = useState('');
-  const [imageUrlInput, setImageUrlInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +29,6 @@ export const FuckifyPage: React.FC = () => {
   const handleReset = () => {
     setImages([]);
     setPrompt('');
-    setImageUrlInput('');
     setLoading(false);
     setLoadingMessage('');
     setError(null);
@@ -49,20 +47,6 @@ export const FuckifyPage: React.FC = () => {
     const preview = URL.createObjectURL(file);
     setImages(prev => [...prev, { file, preview, base64 }]);
   }, [images.length]);
-
-  const handleAddUrl = () => {
-    if (images.length >= 3) {
-      setError('Maximum 3 images allowed');
-      return;
-    }
-    if (!imageUrlInput.trim()) {
-      setError('Please enter a valid image URL');
-      return;
-    }
-    setError(null);
-    setImages(prev => [...prev, { preview: imageUrlInput.trim(), url: imageUrlInput.trim() }]);
-    setImageUrlInput('');
-  };
 
   const handleRemoveImage = (index: number) => {
     setImages(prev => {
@@ -273,29 +257,6 @@ export const FuckifyPage: React.FC = () => {
                           </label>
                         </div>
                       )}
-                    </div>
-
-                    {/* URL Input */}
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={imageUrlInput}
-                        onChange={(e) => setImageUrlInput(e.target.value)}
-                        placeholder="Or paste image URL here"
-                        className="flex-1 bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 placeholder-gray-500"
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            handleAddUrl();
-                          }
-                        }}
-                      />
-                      <button
-                        onClick={handleAddUrl}
-                        disabled={images.length >= 3}
-                        className="px-4 py-3 bg-pink-600 hover:bg-pink-500 text-white rounded-lg font-semibold transition-colors disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed"
-                      >
-                        Add URL
-                      </button>
                     </div>
                   </div>
 
