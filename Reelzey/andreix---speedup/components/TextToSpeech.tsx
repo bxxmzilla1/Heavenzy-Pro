@@ -14,7 +14,7 @@ interface VoiceActor {
 const TextToSpeech: React.FC<TextToSpeechProps> = ({ onOpenSettings }) => {
   const [text, setText] = useState('');
   const [voiceId, setVoiceId] = useState('');
-  const [modelId, setModelId] = useState('eleven_multilingual_v2');
+  const [modelId, setModelId] = useState('eleven_v3');
   const [outputFormat, setOutputFormat] = useState('mp3_44100_128');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -156,7 +156,7 @@ const TextToSpeech: React.FC<TextToSpeechProps> = ({ onOpenSettings }) => {
   const handleReset = () => {
     setText('');
     setVoiceId('');
-    setModelId('eleven_multilingual_v2');
+    setModelId('eleven_v3');
     setOutputFormat('mp3_44100_128');
     setLoading(false);
     setError(null);
@@ -244,21 +244,6 @@ const TextToSpeech: React.FC<TextToSpeechProps> = ({ onOpenSettings }) => {
                   <p className="text-xs text-gray-400 mt-2">Select a voice actor from your saved voice actors.</p>
                 </div>
 
-                {/* Model Selection */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-300">Model</label>
-                  <select
-                    value={modelId}
-                    onChange={(e) => setModelId(e.target.value)}
-                    className="w-full px-4 py-3 bg-black/40 rounded-xl border border-gray-800 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-300"
-                    disabled={loading}
-                  >
-                    <option value="eleven_multilingual_v2">eleven_multilingual_v2</option>
-                    <option value="eleven_turbo_v2_5">eleven_turbo_v2_5</option>
-                    <option value="eleven_monolingual_v1">eleven_monolingual_v1</option>
-                    <option value="eleven_v3">eleven_v3</option>
-                  </select>
-                </div>
 
                 {/* Convert Button */}
                 {!audioUrl && (
