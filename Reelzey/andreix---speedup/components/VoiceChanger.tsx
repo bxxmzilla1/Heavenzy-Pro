@@ -262,18 +262,6 @@ const VoiceChanger: React.FC<VoiceChangerProps> = ({ onOpenSettings }) => {
                   <p className="text-xs text-gray-400 mt-2">Select a voice actor to transform your audio.</p>
                 </div>
 
-                {/* Model Selection */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-gray-300">Model</label>
-                  <select
-                    value={modelId}
-                    onChange={(e) => setModelId(e.target.value)}
-                    className="w-full px-4 py-3 bg-black/40 rounded-xl border border-gray-800 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-300"
-                    disabled={loading}
-                  >
-                    <option value="eleven_multilingual_sts_v2">eleven_multilingual_sts_v2</option>
-                  </select>
-                </div>
 
                 {/* Convert Button */}
                 {!audioUrl && (
