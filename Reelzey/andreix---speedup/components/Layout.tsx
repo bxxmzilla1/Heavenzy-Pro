@@ -7,10 +7,6 @@ import VideoCreator from './VideoCreator';
 import ScriptCreator from './ScriptCreator';
 import HistorySidebar from './HistorySidebar';
 import MirrorMode from './MirrorMode';
-import VoiceCloner from './VoiceCloner';
-import TextToSpeech from './TextToSpeech';
-import VoiceChanger from './VoiceChanger';
-import VoiceActors from './VoiceActors';
 import SpeechMode from './SpeechMode';
 
 const Layout: React.FC = () => {
@@ -156,7 +152,7 @@ const Layout: React.FC = () => {
       />
 
       {/* Main Content Area - Adjusted for sidebar/footer and main app left sidebar */}
-      <div className={`pt-16 ${(activeMenu === 'directorMode' || activeMenu === 'mirrorMode' || activeMenu === 'stageCreator' || activeMenu === 'speechMode' || activeMenu === 'voiceCloner' || activeMenu === 'textToSpeech' || activeMenu === 'voiceChanger' || activeMenu === 'voiceActors') ? 'md:pl-64' : ''} ${(activeMenu === 'directorMode' || activeMenu === 'mirrorMode' || activeMenu === 'stageCreator' || activeMenu === 'speechMode' || activeMenu === 'voiceCloner' || activeMenu === 'textToSpeech' || activeMenu === 'voiceChanger' || activeMenu === 'voiceActors') ? 'pb-24 md:pb-0' : ''}`}>
+      <div className={`pt-16 ${(activeMenu === 'directorMode' || activeMenu === 'mirrorMode' || activeMenu === 'stageCreator' || activeMenu === 'speechMode') ? 'md:pl-64' : ''} ${(activeMenu === 'directorMode' || activeMenu === 'mirrorMode' || activeMenu === 'stageCreator' || activeMenu === 'speechMode') ? 'pb-24 md:pb-0' : ''}`}>
         {/* Director Mode Title */}
         {activeMenu === 'directorMode' && (
           <div className="px-4 md:px-8 pt-8 pb-4">
@@ -239,20 +235,8 @@ const Layout: React.FC = () => {
           {activeMenu === 'stageCreator' && (
             <App />
           )}
-          {activeMenu === 'voiceCloner' && (
-            <VoiceCloner />
-          )}
-          {activeMenu === 'textToSpeech' && (
-            <TextToSpeech />
-          )}
-          {activeMenu === 'voiceChanger' && (
-            <VoiceChanger />
-          )}
           {activeMenu === 'speechMode' && (
             <SpeechMode />
-          )}
-          {activeMenu === 'voiceActors' && (
-            <VoiceActors />
           )}
       </main>
       </div>
