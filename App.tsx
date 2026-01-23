@@ -12,6 +12,7 @@ import { HistorySidebar } from './components/HistorySidebar';
 import { MinusCircleIcon } from './components/IconComponents';
 import { CreatorSettingsModal } from './components/CreatorSettingsModal';
 import { LeftSidebar } from './components/LeftSidebar';
+import ReelzeyApp from './components/ReelzeyApp';
 
 const App: React.FC = () => {
   const [activeApp, setActiveApp] = useState<string>('halyxis');
@@ -314,18 +315,13 @@ const App: React.FC = () => {
     </button>
   );
 
-  // Render Reelzey view (blank for now)
+  // Render Reelzey app
   if (activeApp === 'reelzey') {
     return (
       <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
         <div className="pl-24">
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-400 mb-2">Reelzey</h2>
-              <p className="text-sm text-gray-600">Coming soon...</p>
-            </div>
-          </div>
+          <ReelzeyApp />
         </div>
       </div>
     );
