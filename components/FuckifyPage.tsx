@@ -292,17 +292,17 @@ export const FuckifyPage: React.FC = () => {
                     <button
                       onClick={handleGenerate}
                       disabled={isGenerateDisabled}
-                      className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:cursor-not-allowed disabled:shadow-none"
+                      className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
                     >
-                      <i className="fas fa-magic text-white"></i>
-                      <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Generate Edit</span>
+                      <i className="fas fa-magic"></i>
+                      Generate Edit
                     </button>
                     <button
                       onClick={handleReset}
-                      className="w-full md:w-auto px-6 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gray-700 hover:bg-gray-600"
+                      className="w-full md:w-auto px-6 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gray-700 hover:bg-gray-600 text-white"
                     >
-                      <i className="fas fa-redo text-white"></i>
-                      <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Reset</span>
+                      <i className="fas fa-redo"></i>
+                      Reset
                     </button>
                   </div>
                 </div>
