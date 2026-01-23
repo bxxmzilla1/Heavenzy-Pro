@@ -241,13 +241,13 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
         <>
           {!generatedImageUrl && (
             <>
-              <div className="bg-[#0f1115] border border-white/5 rounded-xl p-6 md:p-8 space-y-6">
+              <div className="bg-[#0f1115] border border-white/5 rounded-xl p-4 md:p-6 space-y-4 max-w-3xl mx-auto">
                 {/* Image Upload Section */}
                 <div>
-                  <label className="block mb-3 text-sm font-medium text-gray-300 uppercase tracking-wider">
+                  <label className="block mb-2 text-xs font-medium text-gray-300 uppercase tracking-wider">
                     1. Upload Images (Max 3)
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                     {images.map((img, index) => (
                       <div key={index} className="relative group">
                         <div className="aspect-square bg-black/40 rounded-lg overflow-hidden border-2 border-gray-700">
@@ -255,7 +255,7 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
                         </div>
                         <button
                           onClick={() => handleRemoveImage(index)}
-                          className="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
                           title="Remove image"
                         >
                           <i className="fas fa-times text-xs"></i>
@@ -275,8 +275,8 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
                             }}
                             className="hidden"
                           />
-                          <i className="fas fa-plus text-2xl text-gray-400 mb-2"></i>
-                          <span className="text-sm text-gray-400">Add Image</span>
+                          <i className="fas fa-plus text-xl text-gray-400 mb-1"></i>
+                          <span className="text-xs text-gray-400">Add Image</span>
                         </label>
                       </div>
                     )}
@@ -285,8 +285,8 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
 
                 {/* Prompt Section */}
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-medium text-gray-300 uppercase tracking-wider">
                       2. Prompt (Optional)
                     </label>
                     <button
@@ -298,13 +298,13 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
                           console.error('Failed to paste:', error);
                         }
                       }}
-                      className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-pink-600 transition-colors border border-gray-700 flex items-center gap-2"
+                      className="bg-gray-800/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-pink-600 transition-colors border border-gray-700 flex items-center gap-1.5"
                     >
-                      <i className="fas fa-paste"></i> Paste
+                      <i className="fas fa-paste text-xs"></i> Paste
                     </button>
                   </div>
                   <textarea
-                    className="w-full h-32 bg-black/40 rounded-lg p-4 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 placeholder-gray-500"
+                    className="w-full h-24 bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 placeholder-gray-500 text-sm"
                     placeholder="e.g., A massive, dazzling Christmas tree in Times Square, overflowing with colorful ornaments..."
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
@@ -312,18 +312,18 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-4 border-t border-gray-700/50">
+                <div className="flex flex-col md:flex-row items-center justify-center gap-3 pt-3 border-t border-gray-700/50">
                   <button
                     onClick={handleGenerate}
                     disabled={isGenerateDisabled}
-                    className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
+                    className="w-full md:w-auto px-6 py-3 rounded-xl font-semibold text-base transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
                   >
                     <i className="fas fa-magic text-white"></i>
                     <span className="text-white">Generate Edit</span>
                   </button>
                   <button
                     onClick={handleReset}
-                    className="w-full md:w-auto px-6 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gray-700 hover:bg-gray-600 text-white"
+                    className="w-full md:w-auto px-5 py-3 rounded-xl font-semibold text-base transition-all flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white"
                   >
                     <i className="fas fa-redo text-white"></i>
                     <span className="text-white">Reset</span>
@@ -604,10 +604,10 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
         <>
           {!generatedVideoUrl && (
             <>
-              <div className="bg-[#0f1115] border border-white/5 rounded-xl p-6 md:p-8 space-y-6">
+              <div className="bg-[#0f1115] border border-white/5 rounded-xl p-4 md:p-6 space-y-4 max-w-3xl mx-auto">
                 {/* Image Upload Section */}
                 <div>
-                  <label className="block mb-3 text-sm font-medium text-gray-300 uppercase tracking-wider">
+                  <label className="block mb-2 text-xs font-medium text-gray-300 uppercase tracking-wider">
                     1. Upload Image
                   </label>
                   {image ? (
@@ -622,14 +622,14 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                           }
                           setImage(null);
                         }}
-                        className="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
                         title="Remove image"
                       >
                         <i className="fas fa-times text-xs"></i>
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center h-64 bg-black/40 rounded-lg border-2 border-dashed border-gray-600 hover:border-pink-400 transition-colors cursor-pointer">
+                    <label className="flex flex-col items-center justify-center h-40 bg-black/40 rounded-lg border-2 border-dashed border-gray-600 hover:border-pink-400 transition-colors cursor-pointer">
                       <input
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
@@ -640,16 +640,16 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                         }}
                         className="hidden"
                       />
-                      <i className="fas fa-plus text-4xl text-gray-400 mb-2"></i>
-                      <span className="text-sm text-gray-400">Add Image</span>
+                      <i className="fas fa-plus text-2xl text-gray-400 mb-1"></i>
+                      <span className="text-xs text-gray-400">Add Image</span>
                     </label>
                   )}
                 </div>
 
                 {/* Prompt Section */}
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-medium text-gray-300 uppercase tracking-wider">
                       2. Prompt (Optional)
                     </label>
                     <button
@@ -661,13 +661,13 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                           console.error('Failed to paste:', error);
                         }
                       }}
-                      className="bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-pink-600 transition-colors border border-gray-700 flex items-center gap-2"
+                      className="bg-gray-800/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-pink-600 transition-colors border border-gray-700 flex items-center gap-1.5"
                     >
-                      <i className="fas fa-paste"></i> Paste
+                      <i className="fas fa-paste text-xs"></i> Paste
                     </button>
                   </div>
                   <textarea
-                    className="w-full h-32 bg-black/40 rounded-lg p-4 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 placeholder-gray-500"
+                    className="w-full h-24 bg-black/40 rounded-lg p-3 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 placeholder-gray-500 text-sm"
                     placeholder="e.g., Confident fashion model walking towards camera in slow motion..."
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
@@ -675,15 +675,15 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                 </div>
 
                 {/* Duration and Resolution Options */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-medium text-gray-300 uppercase tracking-wider mb-1.5">
                       Duration (seconds)
                     </label>
                     <select
                       value={duration}
                       onChange={(e) => setDuration(Number(e.target.value))}
-                      className="w-full px-4 py-3 bg-black rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300"
+                      className="w-full px-3 py-2 bg-black rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 text-sm"
                       style={{ backgroundColor: '#000000' }}
                     >
                       <option value={5} style={{ backgroundColor: '#000000' }}>5 seconds</option>
@@ -691,13 +691,13 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-medium text-gray-300 uppercase tracking-wider mb-1.5">
                       Resolution
                     </label>
                     <select
                       value={resolution}
                       onChange={(e) => setResolution(e.target.value)}
-                      className="w-full px-4 py-3 bg-black rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300"
+                      className="w-full px-3 py-2 bg-black rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300 text-sm"
                       style={{ backgroundColor: '#000000' }}
                     >
                       <option value="480p" style={{ backgroundColor: '#000000' }}>480p</option>
@@ -707,18 +707,18 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-4 border-t border-gray-700/50">
+                <div className="flex flex-col md:flex-row items-center justify-center gap-3 pt-3 border-t border-gray-700/50">
                   <button
                     onClick={handleGenerate}
                     disabled={isGenerateDisabled}
-                    className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
+                    className="w-full md:w-auto px-6 py-3 rounded-xl font-semibold text-base transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white shadow-lg shadow-pink-500/20 disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none"
                   >
                     <i className="fas fa-video text-white"></i>
                     <span className="text-white">Generate Video</span>
                   </button>
                   <button
                     onClick={handleReset}
-                    className="w-full md:w-auto px-6 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-gray-700 hover:bg-gray-600 text-white"
+                    className="w-full md:w-auto px-5 py-3 rounded-xl font-semibold text-base transition-all flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white"
                   >
                     <i className="fas fa-redo text-white"></i>
                     <span className="text-white">Reset</span>
