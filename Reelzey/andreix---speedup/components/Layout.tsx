@@ -110,10 +110,10 @@ const Layout: React.FC = () => {
     <div className="min-h-screen bg-black">
       <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-purple-500/20 fixed top-0 left-24 right-0 z-40">
         <div className="flex items-center justify-between h-16">
-          <a href="#" onClick={(e) => { e.preventDefault(); setActiveMenu('directorMode'); setActiveView('scriptCreator'); }} className="flex items-center">
-            <span className="self-center text-xl font-semibold whitespace-nowrap gradient-text">Reelzey</span>
-          </a>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-4">
+            <a href="#" onClick={(e) => { e.preventDefault(); setActiveMenu('directorMode'); setActiveView('scriptCreator'); }} className="flex items-center">
+              <span className="self-center text-xl font-semibold whitespace-nowrap gradient-text">Reelzey</span>
+            </a>
             <div className="p-2 rounded-full text-gray-400 bg-gray-800/50 flex items-center text-sm h-9 px-3">
               <i className="fas fa-wallet mr-2 text-purple-400"></i>
               {isBalanceLoading ? (
@@ -126,6 +126,8 @@ const Layout: React.FC = () => {
                 <span className="text-gray-500">N/A</span>
               )}
             </div>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
             <button 
               onClick={() => setIsHistoryVisible(true)} 
               className={`p-2 rounded-full transition-colors relative ${

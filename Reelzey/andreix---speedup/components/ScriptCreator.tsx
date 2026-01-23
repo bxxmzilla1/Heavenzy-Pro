@@ -88,9 +88,16 @@ const ScriptCreator: React.FC = () => {
   }, [image, mood, cameraView, duration, prompt]);
 
   return (
-    <div className="px-4 md:px-8 pb-8 max-w-5xl mx-auto">
-      <main className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="flex flex-col space-y-6 glass p-6 rounded-2xl">
+    <div className="px-4 md:px-8 pb-8 max-w-7xl mx-auto">
+      <main className="w-full grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-8">
+        <div className="glass p-6 rounded-2xl order-2 lg:order-1">
+          <SceneDisplay
+            scene={generatedScene}
+            isLoading={isLoading && loadingAction === 'Generating scene...'}
+          />
+        </div>
+
+        <div className="flex flex-col space-y-6 glass p-6 rounded-2xl order-1 lg:order-2">
           <ImageUploader onImageUpload={handleImageUpload} imagePreview={image?.base64 || null} />
           
           <MoodSelector moods={MOODS} selectedMood={mood} onSelectMood={setMood} />
@@ -138,13 +145,6 @@ const ScriptCreator: React.FC = () => {
           </div>
 
           {error && <p className="text-red-400 text-center">{error}</p>}
-        </div>
-
-        <div className="glass p-6 rounded-2xl">
-          <SceneDisplay
-            scene={generatedScene}
-            isLoading={isLoading && loadingAction === 'Generating scene...'}
-          />
         </div>
       </main>
     </div>
