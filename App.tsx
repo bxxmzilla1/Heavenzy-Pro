@@ -11,6 +11,7 @@ import { saveHistoryItemToDb, getHistoryFromDb } from './utils/storageUtils';
 import { HistorySidebar } from './components/HistorySidebar';
 import { MinusCircleIcon } from './components/IconComponents';
 import { CreatorSettingsModal } from './components/CreatorSettingsModal';
+import { LeftSidebar } from './components/LeftSidebar';
 
 const App: React.FC = () => {
   // Generator State
@@ -313,12 +314,14 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
-      <Header 
-        onToggleHistory={() => setIsHistorySidebarOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-      />
-      
-      <main className="container mx-auto p-4 md:p-8 max-w-7xl">
+      <LeftSidebar />
+      <div className="pl-16">
+        <Header 
+          onToggleHistory={() => setIsHistorySidebarOpen(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+        />
+        
+        <main className="container mx-auto p-4 md:p-8 max-w-7xl">
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
                 <div className="w-full lg:w-[380px] flex-shrink-0 flex flex-col gap-8">
                     <div className="bg-[#0f1115] border border-white/5 rounded-xl p-1.5 flex gap-1">
@@ -425,7 +428,8 @@ const App: React.FC = () => {
                     />
                 </div>
             </div>
-      </main>
+        </main>
+      </div>
       
       <HistorySidebar
         isOpen={isHistorySidebarOpen}
