@@ -49,6 +49,13 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             text: 'text-blue-400',
             hoverText: 'group-hover:text-blue-300',
           },
+          pink: {
+            bg: 'bg-pink-500/10',
+            border: 'border-pink-500/20',
+            hoverBg: 'hover:bg-pink-500/20',
+            text: 'text-pink-400',
+            hoverText: 'group-hover:text-pink-300',
+          },
         };
         const colors = colorClasses[item.color as keyof typeof colorClasses] || colorClasses.teal;
 

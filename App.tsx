@@ -14,6 +14,7 @@ import { LeftSidebar } from './components/LeftSidebar';
 import ReelzeyApp from './components/ReelzeyApp';
 import { SettingsPage } from './components/SettingsPage';
 import { VoicerPage } from './components/VoicerPage';
+import { FuckifyPage } from './components/FuckifyPage';
 
 const App: React.FC = () => {
   const [activeApp, setActiveApp] = useState<string>('halyxis');
@@ -334,6 +335,18 @@ const App: React.FC = () => {
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
         <div className="pl-24">
           <VoicerPage />
+        </div>
+      </div>
+    );
+  }
+
+  // Render Fuckify app
+  if (activeApp === 'fuckify') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <div className="pl-24">
+          <FuckifyPage />
         </div>
       </div>
     );
