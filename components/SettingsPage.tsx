@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { deletePasswordFromDb } from '../utils/storageUtils';
 
 interface SettingsPageProps {
   onLogout?: () => void;
@@ -47,7 +46,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020408] text-gray-100">
+    <div className="w-full bg-[#020408] text-gray-100">
       <div className="container mx-auto p-4 md:p-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-400 via-purple-400 to-teal-400 bg-clip-text text-transparent mb-2">
@@ -93,16 +92,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({ onLogout }) => {
             <p className="text-xs text-gray-500 mt-2">Required for all Gemini AI features including Stage Creator, image analysis, script generation, and content generation. Get your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline">Google AI Studio</a>.</p>
           </div>
 
-          <div className="flex gap-4 justify-between items-center border-t border-gray-700/50 pt-6 mt-6">
-            <button
-              onClick={handleLogout}
-              className="px-6 py-2 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 hover:border-red-500/50"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Logout
-            </button>
+          <div className="flex gap-4 justify-end border-t border-gray-700/50 pt-6 mt-6">
             <button
               onClick={handleSave}
               className="px-6 py-2 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-teal-600 hover:from-purple-500 hover:to-teal-500 text-white shadow-lg shadow-purple-500/20"
