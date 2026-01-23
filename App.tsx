@@ -12,8 +12,11 @@ import { HistorySidebar } from './components/HistorySidebar';
 import { MinusCircleIcon } from './components/IconComponents';
 import { CreatorSettingsModal } from './components/CreatorSettingsModal';
 import { LeftSidebar } from './components/LeftSidebar';
+import ReelzeyApp from './components/ReelzeyApp';
 
 const App: React.FC = () => {
+  const [activeApp, setActiveApp] = useState<string>('halyxis');
+  
   // Generator State
   const [originalImage, setOriginalImage] = useState<UploadedImage | null>(null);
   const [referenceImage, setReferenceImage] = useState<UploadedImage | null>(null);
@@ -312,9 +315,22 @@ const App: React.FC = () => {
     </button>
   );
 
+  // Render Reelzey app if selected
+  if (activeApp === 'reelzey') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <div className="pl-24">
+          <ReelzeyApp />
+        </div>
+      </div>
+    );
+  }
+
+  // Render Halyxis app (default)
   return (
     <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
-      <LeftSidebar />
+      <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
       <div className="pl-24">
         <Header 
           onToggleHistory={() => setIsHistorySidebarOpen(true)}
