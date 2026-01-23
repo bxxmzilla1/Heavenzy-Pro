@@ -14,7 +14,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'elevenlabs-vendor': ['@elevenlabs/elevenlabs-js'],
           'google-genai-vendor': ['@google/genai'],
         },
       },
