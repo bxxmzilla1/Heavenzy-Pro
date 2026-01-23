@@ -136,8 +136,9 @@ export const getTokenPacks = (): TokenPack[] => {
 // --- History (IndexedDB) ---
 
 const DB_NAME = 'ai_persona_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Incremented to add password store
 const HISTORY_STORE = 'history_items';
+const PASSWORD_STORE = 'app_password';
 
 const openDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -151,6 +152,10 @@ const openDB = (): Promise<IDBDatabase> => {
       if (!db.objectStoreNames.contains(HISTORY_STORE)) {
         // Create object store with 'id' as key path
         db.createObjectStore(HISTORY_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(PASSWORD_STORE)) {
+        // Create password store
+        db.createObjectStore(PASSWORD_STORE, { keyPath: 'id' });
       }
     };
   });
@@ -190,5 +195,43 @@ export const getHistoryFromDb = async (): Promise<HistoryItem[]> => {
   } catch (error) {
     console.error('Failed to get history from IndexedDB:', error);
     return [];
+  }
+};
+
+// --- Password (IndexedDB) ---
+
+export const savePasswordToDb = async (password: string): Promise<void> => {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(PASSWORD_STORE, 'readwrite');
+    const store = tx.objectStore(PASSWORD_STORE);
+    store.put({ id: 'app_password', password, savedAt: new Date().toISOString() });
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch (error) {
+    console.error('Failed to save password to IndexedDB:', error);
+    throw error;
+  }
+};
+
+export const getPasswordFromDb = async (): Promise<string | null> => {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(PASSWORD_STORE, 'readonly');
+    const store = tx.objectStore(PASSWORD_STORE);
+    const request = store.get('app_password');
+
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        const result = request.result;
+        resolve(result ? result.password : null);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('Failed to get password from IndexedDB:', error);
+    return null;
   }
 };

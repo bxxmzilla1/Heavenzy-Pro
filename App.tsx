@@ -7,7 +7,7 @@ import { ImageDisplay } from './components/ImageDisplay';
 import { editImageWithPrompt, editImageWithPromptOnly, editImageWithMultiplePeople } from './services/geminiService';
 import { fileToBase64, blobToBase64 } from './utils/fileUtils';
 import type { UploadedImage, AspectRatio, HistoryItem, EditMode } from './types';
-import { saveHistoryItemToDb, getHistoryFromDb } from './utils/storageUtils';
+import { saveHistoryItemToDb, getHistoryFromDb, getPasswordFromDb } from './utils/storageUtils';
 import { HistorySidebar } from './components/HistorySidebar';
 import { MinusCircleIcon } from './components/IconComponents';
 import { LeftSidebar } from './components/LeftSidebar';
@@ -15,8 +15,10 @@ import ReelzeyApp from './components/ReelzeyApp';
 import { SettingsPage } from './components/SettingsPage';
 import { VoicerPage } from './components/VoicerPage';
 import { FuckifyPage } from './components/FuckifyPage';
+import { PasswordPage } from './components/PasswordPage';
 
 const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [activeApp, setActiveApp] = useState<string>('halyxis');
   
   // Generator State
@@ -33,14 +35,25 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<EditMode>('reference');
   const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState(false);
 
+  // Check authentication on initial load
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const savedPassword = await getPasswordFromDb();
+      setIsAuthenticated(savedPassword !== null);
+    };
+    checkAuthentication();
+  }, []);
+
   // Load history from IndexedDB on initial load
   useEffect(() => {
-    const loadHistory = async () => {
-      const savedHistory = await getHistoryFromDb();
-      setHistory(savedHistory);
-    };
-    loadHistory();
-  }, []);
+    if (isAuthenticated) {
+      const loadHistory = async () => {
+        const savedHistory = await getHistoryFromDb();
+        setHistory(savedHistory);
+      };
+      loadHistory();
+    }
+  }, [isAuthenticated]);
   
   const handleModeChange = (newMode: EditMode) => {
     setMode(newMode);
