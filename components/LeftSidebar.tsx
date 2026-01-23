@@ -28,6 +28,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             hoverBg: 'hover:bg-teal-500/20',
             text: 'text-teal-400',
             hoverText: 'group-hover:text-teal-300',
+            ring: 'ring-teal-500/50',
           },
           purple: {
             bg: 'bg-purple-500/10',
@@ -35,6 +36,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             hoverBg: 'hover:bg-purple-500/20',
             text: 'text-purple-400',
             hoverText: 'group-hover:text-purple-300',
+            ring: 'ring-purple-500/50',
           },
           gray: {
             bg: 'bg-gray-500/10',
@@ -42,6 +44,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             hoverBg: 'hover:bg-gray-500/20',
             text: 'text-gray-400',
             hoverText: 'group-hover:text-gray-300',
+            ring: 'ring-gray-500/50',
           },
           blue: {
             bg: 'bg-blue-500/10',
@@ -49,6 +52,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             hoverBg: 'hover:bg-blue-500/20',
             text: 'text-blue-400',
             hoverText: 'group-hover:text-blue-300',
+            ring: 'ring-blue-500/50',
           },
           pink: {
             bg: 'bg-pink-500/10',
@@ -56,6 +60,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             hoverBg: 'hover:bg-pink-500/20',
             text: 'text-pink-400',
             hoverText: 'group-hover:text-pink-300',
+            ring: 'ring-pink-500/50',
           },
         };
         const colors = colorClasses[item.color as keyof typeof colorClasses] || colorClasses.teal;
@@ -72,7 +77,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             <div
               className={`w-12 h-12 flex items-center justify-center rounded-xl border transition-all duration-200 group-hover:scale-105 ${
                 isActive
-                  ? `${colors.bg} ${colors.border} ${colors.hoverBg} ring-2 ring-offset-2 ring-offset-[#0f1115] ${colors.border.replace('/20', '/40')}`
+                  ? `${colors.bg} ${colors.border} ${colors.hoverBg} ring-2 ${colors.ring} ring-offset-2 ring-offset-[#0f1115] ${colors.border.replace('/20', '/40')}`
                   : `${colors.bg} ${colors.border} ${colors.hoverBg}`
               }`}
             >
