@@ -171,34 +171,10 @@ const Layout: React.FC = () => {
             <h1 className="text-3xl font-bold gradient-text">Mirror Mode</h1>
           </div>
         )}
-        {/* Voice Cloner Title */}
-        {activeMenu === 'voiceCloner' && (
-          <div className="px-4 md:px-8 pt-8 pb-4">
-            <h1 className="text-3xl font-bold gradient-text">Voice Cloner</h1>
-          </div>
-        )}
-        {/* Text To Speech Title */}
-        {activeMenu === 'textToSpeech' && (
-          <div className="px-4 md:px-8 pt-8 pb-4">
-            <h1 className="text-3xl font-bold gradient-text">Text To Speech</h1>
-          </div>
-        )}
-        {/* Voice Changer Title */}
-        {activeMenu === 'voiceChanger' && (
-          <div className="px-4 md:px-8 pt-8 pb-4">
-            <h1 className="text-3xl font-bold gradient-text">Voice Changer</h1>
-          </div>
-        )}
         {/* Speech Mode Title */}
         {activeMenu === 'speechMode' && (
           <div className="px-4 md:px-8 pt-8 pb-4">
             <h1 className="text-3xl font-bold gradient-text">Speech Mode</h1>
-          </div>
-        )}
-        {/* Voice Actors Title */}
-        {activeMenu === 'voiceActors' && (
-          <div className="px-4 md:px-8 pt-8 pb-4">
-            <h1 className="text-3xl font-bold gradient-text">Voice Actors</h1>
           </div>
         )}
         {/* Show tabs only when Director Mode is active */}
