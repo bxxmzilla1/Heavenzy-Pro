@@ -87,7 +87,7 @@ export const FuckifyPage: React.FC = () => {
     const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
     const [hoveredMediaType, setHoveredMediaType] = useState<'image' | 'video' | null>(null);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-    const [activeTab, setActiveTab] = useState<'all' | 'images' | 'videos'>('all');
+    const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
 
     const fetchHistory = useCallback(async () => {
       const WAVESPEED_API_KEY = localStorage.getItem('wavespeedApiKey');
@@ -140,14 +140,8 @@ export const FuckifyPage: React.FC = () => {
       
       window.addEventListener('fuckifyHistoryUpdate', handleHistoryUpdate);
       
-      // Periodic refresh when sidebar is open (every 10 seconds)
-      const refreshInterval = setInterval(() => {
-        fetchHistory();
-      }, 10000);
-      
       return () => {
         window.removeEventListener('fuckifyHistoryUpdate', handleHistoryUpdate);
-        clearInterval(refreshInterval);
       };
     }, [fetchHistory]);
 
@@ -296,16 +290,6 @@ export const FuckifyPage: React.FC = () => {
             <div className="px-4 py-3 border-b border-gray-800">
               <div className="flex gap-2">
                 <button
-                  onClick={() => setActiveTab('all')}
-                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                    activeTab === 'all'
-                      ? 'bg-pink-600 text-white'
-                      : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-800'
-                  }`}
-                >
-                  All
-                </button>
-                <button
                   onClick={() => setActiveTab('images')}
                   className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
                     activeTab === 'images'
@@ -353,17 +337,16 @@ export const FuckifyPage: React.FC = () => {
               {!isLoading && !error && predictions.length > 0 && (() => {
                 // Filter predictions based on active tab
                 const filteredPredictions = predictions.filter((p: Prediction) => {
-                  if (activeTab === 'all') return true;
                   const isVideo = p.model && p.model.includes('image-to-video');
                   if (activeTab === 'images') return !isVideo;
                   if (activeTab === 'videos') return isVideo;
-                  return true;
+                  return false;
                 });
 
                 if (filteredPredictions.length === 0) {
                   return (
                     <p className="text-gray-500 text-center mt-8">
-                      No {activeTab === 'all' ? '' : activeTab} generations found.
+                      No {activeTab} generations found.
                     </p>
                   );
                 }
