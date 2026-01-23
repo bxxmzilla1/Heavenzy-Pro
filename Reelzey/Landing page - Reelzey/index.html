@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reelzey | AI Cinema Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050505;
+            color: #e5e7eb;
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #a855f7, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+        .neon-purple {
+            color: #a855f7;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
+        .bg-glass {
+            background: rgba(20, 20, 25, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.7);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(168, 85, 247, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
+        }
+        .pulse-glow {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="fixed w-full top-0 z-50 bg-black/80 border-b border-purple-900/30 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+            <span class="self-center text-xl font-semibold whitespace-nowrap gradient-text">Reelzey</span>
+        </div>
+    </header>
+
+    <main class="pt-28 sm:pt-24 pb-12 px-4 md:px-6 max-w-7xl mx-auto">
+        
+        <section class="text-center mb-20 md:mb-24 px-2 sm:px-0">
+            <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-8 sm:mb-6 tracking-tight leading-[1.1] sm:leading-tight">
+                Static to <span class="neon-purple">Cinematic.</span>
+            </h1>
+            <p class="text-zinc-400 text-lg sm:text-xl md:text-lg max-w-2xl mx-auto mb-12 sm:mb-10 leading-relaxed px-2">
+                The all-in-one AI production suite. Build characters, script moods, and generate high-fidelity video in one seamless workflow.
+            </p>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+            
+            <div class="bg-glass p-6 md:p-8 rounded-2xl flex flex-col">
+                <div class="mb-6 flex justify-between items-start">
+                    <div class="bg-purple-500/10 p-3 rounded-xl border border-purple-500/20">
+                        <i class="fa-solid fa-layer-group text-2xl text-purple-400"></i>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Stage Mode</span>
+                </div>
+                <h3 class="text-xl md:text-2xl font-bold mb-4">Stage Studio</h3>
+                <p class="text-zinc-400 mb-6 text-sm md:text-base flex-grow">A granular 7-step workflow: Upload, Background, Reference, Clothing, Camera, Generate, and Results.</p>
+                <ul class="space-y-3 mb-4 text-sm text-zinc-300">
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> AI Person Removal</li>
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> Full-Screen Previews</li>
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> Halyxis Teal Integration</li>
+                </ul>
+            </div>
+
+            <div class="bg-glass p-6 md:p-8 rounded-2xl flex flex-col border-t-2 border-purple-500">
+                <div class="mb-6 flex justify-between items-start">
+                    <div class="bg-purple-500/10 p-3 rounded-xl border border-purple-500/20">
+                        <i class="fa-solid fa-clapperboard text-2xl text-purple-400"></i>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Script Mode</span>
+                </div>
+                <h3 class="text-xl md:text-2xl font-bold mb-4">Script & Direction</h3>
+                <p class="text-zinc-400 mb-6 text-sm md:text-base flex-grow">Select from 8 moods (Flirty, Spicy, Chilling) and 4 camera views to direct your scene.</p>
+                <ul class="space-y-3 mb-4 text-sm text-zinc-300">
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> Mood & Camera Selectors</li>
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> AI Prompt Enhancer</li>
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> 5s/10s Duration Control</li>
+                </ul>
+            </div>
+
+            <div class="bg-glass p-6 md:p-8 rounded-2xl flex flex-col">
+                <div class="mb-6 flex justify-between items-start">
+                    <div class="bg-purple-500/10 p-3 rounded-xl border border-purple-500/20">
+                        <i class="fa-solid fa-video text-2xl text-purple-400"></i>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Video Mode</span>
+                </div>
+                <h3 class="text-xl md:text-2xl font-bold mb-4">Instant Video</h3>
+                <p class="text-zinc-400 mb-6 text-sm md:text-base flex-grow">Upload images and describe motion for high-speed rendering with a native player.</p>
+                <ul class="space-y-3 mb-4 text-sm text-zinc-300">
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> Image-to-Video Engine</li>
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> Real-time Success Banners</li>
+                    <li><i class="fa-solid fa-check text-purple-500 mr-2 text-xs"></i> One-Tap HD Downloads</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <section class="mt-20 md:mt-32 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-2 lg:order-1 px-2">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8">Smart Management</h2>
+                <div class="space-y-8">
+                    <div class="flex gap-4">
+                        <div class="text-purple-400 mt-1"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <h4 class="font-bold text-lg">Pulsing History Sidebar</h4>
+                            <p class="text-sm text-zinc-400">Track status with badges and watch the generation button pulse during processing.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-purple-400 mt-1"><i class="fa-solid fa-eye"></i></div>
+                        <div>
+                            <h4 class="font-bold text-lg">Hover Video Previews</h4>
+                            <p class="text-sm text-zinc-400">Auto-playing previews and batch downloading for efficient asset management.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-1 lg:order-2 bg-zinc-900 rounded-3xl p-4 border border-zinc-800 shadow-2xl">
+                <div class="bg-black/50 rounded-2xl p-4 md:p-6 border border-white/5">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xs font-bold uppercase text-zinc-400 tracking-widest">History</span>
+                        <div class="pulse-glow bg-purple-600/20 text-purple-400 text-[9px] px-2 py-1 rounded border border-purple-500/30">PROCESSING</div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-4 p-2 rounded-xl bg-white/5 border border-white/5">
+                            <div class="w-12 h-12 bg-zinc-800 rounded-lg flex-shrink-0"></div>
+                            <div class="flex-grow"><div class="h-2 w-20 bg-zinc-700 rounded-full mb-2"></div><div class="h-1.5 w-10 bg-zinc-800 rounded-full"></div></div>
+                            <span class="text-[9px] font-bold text-green-500">DONE</span>
+                        </div>
+                        <div class="flex items-center gap-4 p-2 rounded-xl bg-purple-500/5 border border-purple-500/20">
+                            <div class="w-12 h-12 bg-zinc-800 rounded-lg flex-shrink-0 relative overflow-hidden">
+                                <div class="absolute inset-0 bg-purple-500/20 animate-pulse"></div>
+                            </div>
+                            <div class="flex-grow"><div class="h-2 w-24 bg-zinc-700 rounded-full mb-2"></div><div class="h-1.5 w-12 bg-zinc-800 rounded-full"></div></div>
+                            <span class="text-[9px] font-bold text-purple-400">72%</span>
+                        </div>
+                    </div>
+                    <button class="w-full mt-6 py-3 bg-zinc-800 rounded-xl text-xs font-bold hover:bg-zinc-700 transition-colors uppercase tracking-widest">Batch Actions</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-zinc-900 py-12 text-center px-4">
+        <p class="text-zinc-500 text-[10px] tracking-widest uppercase mb-2">Designed for next-gen creators</p>
+        <p class="text-zinc-400 text-xs tracking-widest uppercase font-semibold">© 2025 Reelzey AI. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
+
