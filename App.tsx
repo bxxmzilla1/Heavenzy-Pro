@@ -315,7 +315,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
       <LeftSidebar />
-      <div className="pl-16">
+      <div className="pl-24">
         <Header 
           onToggleHistory={() => setIsHistorySidebarOpen(true)}
           onOpenSettings={() => setIsSettingsOpen(true)}
