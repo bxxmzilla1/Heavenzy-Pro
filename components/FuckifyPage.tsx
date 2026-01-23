@@ -662,11 +662,6 @@ export const FuckifyPage: React.FC = () => {
       )}
 
       <div className="container mx-auto p-4 md:p-8 max-w-6xl pt-28">
-        <div className="mb-8 mt-4">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-            Fuckify
-          </h1>
-        </div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center gap-4 p-8 bg-[#0f1115] border border-white/5 rounded-3xl min-h-[50vh]">
