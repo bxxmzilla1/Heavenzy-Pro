@@ -7,60 +7,69 @@ import TextToSpeech from '../Reelzey/andreix---speedup/components/TextToSpeech';
 import VoiceChanger from '../Reelzey/andreix---speedup/components/VoiceChanger';
 // @ts-ignore
 import VoiceActors from '../Reelzey/andreix---speedup/components/VoiceActors';
+import VoicerSidebar from './VoicerSidebar';
 
 export const VoicerPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>('voiceCloner');
-
-  const tabs = [
-    { id: 'voiceCloner', label: 'Voice Cloner', icon: 'fa-microphone' },
-    { id: 'textToSpeech', label: 'Text To Speech', icon: 'fa-volume-up' },
-    { id: 'voiceChanger', label: 'Voice Changer', icon: 'fa-magic' },
-    { id: 'voiceActors', label: 'Voice Actors', icon: 'fa-users' },
-  ];
+  const [activeMenu, setActiveMenu] = useState<string>('voiceCloner');
 
   return (
-    <div className="min-h-screen bg-[#020408] text-gray-100">
+    <div className="min-h-screen bg-black">
       {/* Header */}
-      <div className="border-b border-white/5 bg-[#020408]/90 backdrop-blur-md sticky top-0 z-20">
-        <div className="container mx-auto px-6 py-4">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent mb-4">
-            Voicer
-          </h1>
-          
-          {/* Tabs */}
-          <div className="flex flex-wrap gap-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <i className={`fas ${tab.icon}`}></i>
-                <span>{tab.label}</span>
-              </button>
-            ))}
-          </div>
+      <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-blue-500/20 fixed top-0 left-24 right-0 z-40">
+        <div className="flex items-center justify-between h-16">
+          <a href="#" onClick={(e) => { e.preventDefault(); setActiveMenu('voiceCloner'); }} className="flex items-center">
+            <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">Voicer</span>
+          </a>
         </div>
-      </div>
+      </header>
 
-      {/* Content */}
-      <div className="container mx-auto p-4 md:p-8 max-w-7xl">
-        <div style={{ display: activeTab === 'voiceCloner' ? 'block' : 'none' }}>
-          <VoiceCloner />
-        </div>
-        <div style={{ display: activeTab === 'textToSpeech' ? 'block' : 'none' }}>
-          <TextToSpeech />
-        </div>
-        <div style={{ display: activeTab === 'voiceChanger' ? 'block' : 'none' }}>
-          <VoiceChanger />
-        </div>
-        <div style={{ display: activeTab === 'voiceActors' ? 'block' : 'none' }}>
-          <VoiceActors />
-        </div>
+      {/* Sidebar Menu - Left on desktop, Footer on mobile */}
+      <VoicerSidebar 
+        activeMenu={activeMenu} 
+        onMenuChange={setActiveMenu} 
+      />
+
+      {/* Main Content Area - Adjusted for sidebar/footer and main app left sidebar */}
+      <div className={`pt-16 ${(activeMenu === 'voiceCloner' || activeMenu === 'textToSpeech' || activeMenu === 'voiceChanger' || activeMenu === 'voiceActors') ? 'md:pl-64' : ''} ${(activeMenu === 'voiceCloner' || activeMenu === 'textToSpeech' || activeMenu === 'voiceChanger' || activeMenu === 'voiceActors') ? 'pb-24 md:pb-0' : ''}`}>
+        {/* Voice Cloner Title */}
+        {activeMenu === 'voiceCloner' && (
+          <div className="px-4 md:px-8 pt-8 pb-4">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">Voice Cloner</h1>
+          </div>
+        )}
+        {/* Text To Speech Title */}
+        {activeMenu === 'textToSpeech' && (
+          <div className="px-4 md:px-8 pt-8 pb-4">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">Text To Speech</h1>
+          </div>
+        )}
+        {/* Voice Changer Title */}
+        {activeMenu === 'voiceChanger' && (
+          <div className="px-4 md:px-8 pt-8 pb-4">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">Voice Changer</h1>
+          </div>
+        )}
+        {/* Voice Actors Title */}
+        {activeMenu === 'voiceActors' && (
+          <div className="px-4 md:px-8 pt-8 pb-4">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">Voice Actors</h1>
+          </div>
+        )}
+
+        <main>
+          {activeMenu === 'voiceCloner' && (
+            <VoiceCloner />
+          )}
+          {activeMenu === 'textToSpeech' && (
+            <TextToSpeech />
+          )}
+          {activeMenu === 'voiceChanger' && (
+            <VoiceChanger />
+          )}
+          {activeMenu === 'voiceActors' && (
+            <VoiceActors />
+          )}
+        </main>
       </div>
     </div>
   );
