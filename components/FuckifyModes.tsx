@@ -197,6 +197,8 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
             if (onPulseHistoryButton) {
               onPulseHistoryButton();
             }
+            // Dispatch event to refresh history sidebar
+            window.dispatchEvent(new CustomEvent('fuckifyHistoryUpdate'));
             return;
           }
         } else if (statusData.status === 'failed') {
@@ -558,6 +560,8 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
             if (onPulseHistoryButton) {
               onPulseHistoryButton();
             }
+            // Dispatch event to refresh history sidebar
+            window.dispatchEvent(new CustomEvent('fuckifyHistoryUpdate'));
             return;
           }
         } else if (statusData.status === 'failed') {
@@ -679,10 +683,11 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                     <select
                       value={duration}
                       onChange={(e) => setDuration(Number(e.target.value))}
-                      className="w-full px-4 py-3 bg-black/40 rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300"
+                      className="w-full px-4 py-3 bg-black rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300"
+                      style={{ backgroundColor: '#000000' }}
                     >
-                      <option value={5}>5 seconds</option>
-                      <option value={8}>8 seconds</option>
+                      <option value={5} style={{ backgroundColor: '#000000' }}>5 seconds</option>
+                      <option value={8} style={{ backgroundColor: '#000000' }}>8 seconds</option>
                     </select>
                   </div>
                   <div>
@@ -692,10 +697,11 @@ export const VideoMode: React.FC<VideoModeProps> = ({ onSelectHistoryVideo, onPu
                     <select
                       value={resolution}
                       onChange={(e) => setResolution(e.target.value)}
-                      className="w-full px-4 py-3 bg-black/40 rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300"
+                      className="w-full px-4 py-3 bg-black rounded-lg border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors text-gray-300"
+                      style={{ backgroundColor: '#000000' }}
                     >
-                      <option value="480p">480p</option>
-                      <option value="720p">720p</option>
+                      <option value="480p" style={{ backgroundColor: '#000000' }}>480p</option>
+                      <option value="720p" style={{ backgroundColor: '#000000' }}>720p</option>
                     </select>
                   </div>
                 </div>
