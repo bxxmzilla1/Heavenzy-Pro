@@ -14,6 +14,19 @@ export const VoicerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black">
+      {/* Global styles for dropdown options */}
+      <style>{`
+        select option {
+          background-color: #000000 !important;
+          color: #d1d5db !important;
+        }
+        select option:hover,
+        select option:focus,
+        select option:checked {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+        }
+      `}</style>
       {/* Header */}
       <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-blue-500/20 fixed top-0 left-24 right-0 z-40">
         <div className="flex items-center justify-between h-16">
