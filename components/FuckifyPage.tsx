@@ -410,8 +410,8 @@ export const FuckifyPage: React.FC = () => {
   };
 
   const handleSelectHistoryImage = (url: string) => {
-    setSelectedHistoryImageUrl(url);
     setIsHistoryVisible(false);
+    // ImageMode will handle the image selection internally
   };
 
   const handlePulseHistoryButton = () => {
@@ -471,7 +471,12 @@ export const FuckifyPage: React.FC = () => {
       {/* Body Section - Adjusted for sidebar */}
       <div className="pt-20 mt-16 md:ml-64">
         <div className="container mx-auto max-w-7xl">
-          {activeMenu === 'imageMode' && <ImageMode />}
+          {activeMenu === 'imageMode' && (
+            <ImageMode
+              onSelectHistoryImage={handleSelectHistoryImage}
+              onPulseHistoryButton={handlePulseHistoryButton}
+            />
+          )}
           {activeMenu === 'videoMode' && <VideoMode />}
           {activeMenu === 'editMode' && <EditMode />}
           {activeMenu === 'transformMode' && <TransformMode />}
