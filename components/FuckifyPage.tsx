@@ -477,7 +477,12 @@ export const FuckifyPage: React.FC = () => {
               onPulseHistoryButton={handlePulseHistoryButton}
             />
           )}
-          {activeMenu === 'videoMode' && <VideoMode />}
+          {activeMenu === 'videoMode' && (
+            <VideoMode
+              onSelectHistoryVideo={handleSelectHistoryImage}
+              onPulseHistoryButton={handlePulseHistoryButton}
+            />
+          )}
           {activeMenu === 'editMode' && <EditMode />}
           {activeMenu === 'transformMode' && <TransformMode />}
         </div>
