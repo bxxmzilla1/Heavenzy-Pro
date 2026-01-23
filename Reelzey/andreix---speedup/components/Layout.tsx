@@ -157,7 +157,13 @@ const Layout: React.FC = () => {
       {/* Sidebar Menu - Left on desktop, Footer on mobile */}
       <SidebarMenu 
         activeMenu={activeMenu} 
-        onMenuChange={setActiveMenu} 
+        onMenuChange={(menuId) => {
+          if (menuId === 'settings') {
+            setIsSettingsOpen(true);
+          } else {
+            setActiveMenu(menuId);
+          }
+        }} 
       />
 
       {/* Main Content Area - Adjusted for sidebar/footer and main app left sidebar */}
