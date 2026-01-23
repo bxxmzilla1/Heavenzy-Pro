@@ -661,8 +661,8 @@ export const FuckifyPage: React.FC = () => {
         />
       )}
 
-      <div className="container mx-auto p-4 md:p-8 max-w-6xl pt-24">
-        <div className="mb-8">
+      <div className="container mx-auto p-4 md:p-8 max-w-6xl pt-28">
+        <div className="mb-8 mt-4">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
             Fuckify
           </h1>
