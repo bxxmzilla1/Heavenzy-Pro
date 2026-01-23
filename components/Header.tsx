@@ -18,12 +18,10 @@ export const Header: React.FC<HeaderProps> = ({ onToggleHistory }) => {
           <h1 className="text-xl font-bold tracking-tight text-white sm:hidden">
             Halyxis
           </h1>
-        </div>
-        <div className="flex items-center gap-3 sm:gap-4">
           <button
               onClick={onToggleHistory}
-              className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              title="View History"
+              className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors ml-2"
+              title="Generation History"
           >
               <HistoryIcon className="w-5 h-5" />
           </button>
