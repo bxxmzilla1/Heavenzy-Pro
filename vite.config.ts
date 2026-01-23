@@ -8,6 +8,18 @@ export default defineConfig({
     port: 3000,
     host: '0.0.0.0',
   },
+  build: {
+    chunkSizeWarningLimit: 1000, // Increase chunk size warning limit to 1MB
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'elevenlabs-vendor': ['@elevenlabs/elevenlabs-js'],
+          'google-genai-vendor': ['@google/genai'],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
@@ -43,7 +55,8 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        maximumFileSizeToCacheInBytes: 5000000, // 5 MB limit
       }
     })
   ],
