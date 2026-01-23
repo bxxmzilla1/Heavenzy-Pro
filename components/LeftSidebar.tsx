@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SparklesIcon, VideoIcon, SettingsIcon, MicrophoneIcon } from './IconComponents';
+import { SparklesIcon, VideoIcon, SettingsIcon, MicrophoneIcon, FuckifyIcon } from './IconComponents';
 
 interface LeftSidebarProps {
   activeApp: string;
@@ -12,6 +12,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
     { id: 'halyxis', label: 'Halyxis', icon: SparklesIcon, color: 'teal' },
     { id: 'reelzey', label: 'Reelzey', icon: VideoIcon, color: 'purple' },
     { id: 'voicer', label: 'Voizer', icon: MicrophoneIcon, color: 'blue' },
+    { id: 'fuckify', label: 'Fuckify', icon: FuckifyIcon, color: 'pink' },
     { id: 'settings', label: 'Settings', icon: SettingsIcon, color: 'gray' },
   ];
 
