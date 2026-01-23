@@ -9,11 +9,11 @@ interface LeftSidebarProps {
 
 export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange }) => {
   const menuItems = [
-    { id: 'settings', label: 'Settings', icon: SettingsIcon, color: 'gray' },
     { id: 'halyxis', label: 'Halyxis', icon: SparklesIcon, color: 'teal' },
     { id: 'reelzey', label: 'Reelzey', icon: VideoIcon, color: 'purple' },
     { id: 'voicer', label: 'Voizer', icon: MicrophoneIcon, color: 'blue' },
     { id: 'fuckify', label: 'Fuckify', icon: FuckifyIcon, color: 'pink' },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon, color: 'gray' },
   ];
 
   return (
