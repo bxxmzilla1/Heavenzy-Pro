@@ -14,6 +14,8 @@ import { CreatorSettingsModal } from './components/CreatorSettingsModal';
 import { LeftSidebar } from './components/LeftSidebar';
 
 const App: React.FC = () => {
+  const [activeApp, setActiveApp] = useState<string>('halyxis');
+  
   // Generator State
   const [originalImage, setOriginalImage] = useState<UploadedImage | null>(null);
   const [referenceImage, setReferenceImage] = useState<UploadedImage | null>(null);
@@ -312,9 +314,27 @@ const App: React.FC = () => {
     </button>
   );
 
+  // Render Reelzey view (blank for now)
+  if (activeApp === 'reelzey') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <div className="pl-24">
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-400 mb-2">Reelzey</h2>
+              <p className="text-sm text-gray-600">Coming soon...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Render Halyxis app (default)
   return (
     <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
-      <LeftSidebar />
+      <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
       <div className="pl-24">
         <Header 
           onToggleHistory={() => setIsHistorySidebarOpen(true)}
