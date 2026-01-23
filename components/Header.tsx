@@ -1,13 +1,12 @@
 
 import React from 'react';
-import { SparklesIcon, HistoryIcon, SettingsIcon } from './IconComponents';
+import { SparklesIcon, HistoryIcon } from './IconComponents';
 
 interface HeaderProps {
   onToggleHistory: () => void;
-  onOpenSettings: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onToggleHistory, onOpenSettings }) => {
+export const Header: React.FC<HeaderProps> = ({ onToggleHistory }) => {
   return (
     <header className="bg-[#020408]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-20">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
@@ -21,13 +20,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleHistory, onOpenSettings 
           </h1>
         </div>
         <div className="flex items-center gap-3 sm:gap-4">
-          <button
-              onClick={onOpenSettings}
-              className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-              title="Creator Settings"
-          >
-              <SettingsIcon className="w-5 h-5" />
-          </button>
           <button
               onClick={onToggleHistory}
               className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"

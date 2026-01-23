@@ -10,7 +10,6 @@ import type { UploadedImage, AspectRatio, HistoryItem, EditMode } from './types'
 import { saveHistoryItemToDb, getHistoryFromDb } from './utils/storageUtils';
 import { HistorySidebar } from './components/HistorySidebar';
 import { MinusCircleIcon } from './components/IconComponents';
-import { CreatorSettingsModal } from './components/CreatorSettingsModal';
 import { LeftSidebar } from './components/LeftSidebar';
 import ReelzeyApp from './components/ReelzeyApp';
 import { SettingsPage } from './components/SettingsPage';
@@ -31,7 +30,6 @@ const App: React.FC = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [mode, setMode] = useState<EditMode>('reference');
   const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Load history from IndexedDB on initial load
   useEffect(() => {
@@ -347,7 +345,6 @@ const App: React.FC = () => {
       <div className="pl-24">
         <Header 
           onToggleHistory={() => setIsHistorySidebarOpen(true)}
-          onOpenSettings={() => setIsSettingsOpen(true)}
         />
         
         <main className="container mx-auto p-4 md:p-8 max-w-7xl">
@@ -465,11 +462,6 @@ const App: React.FC = () => {
         onClose={() => setIsHistorySidebarOpen(false)}
         history={history}
         onSelect={handleHistorySelect}
-      />
-      
-      <CreatorSettingsModal 
-          isOpen={isSettingsOpen} 
-          onClose={() => setIsSettingsOpen(false)} 
       />
     </div>
   );
