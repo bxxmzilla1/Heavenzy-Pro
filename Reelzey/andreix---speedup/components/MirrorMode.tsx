@@ -215,15 +215,6 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
         </div>
       ) : (
         <div className="flex flex-col gap-8">
-          {/* Header */}
-          <div className="flex items-center justify-end">
-            <button
-              onClick={handleReset}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-all flex items-center gap-2"
-            >
-              <i className="fas fa-redo"></i> Reset
-            </button>
-          </div>
 
           {/* Generated Preview Card - Only shows when video is selected from history */}
           {generatedVideoUrl && isFromHistory && (
@@ -260,11 +251,6 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
 
               {/* Submit Task Section */}
               <section className="glass p-6 rounded-3xl">
-          <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
-            <i className="fas fa-paper-plane text-purple-400"></i>
-            Submit Task
-          </h2>
-
           <div className="flex flex-col gap-6">
             {/* Image Upload */}
             <div>
@@ -308,27 +294,30 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
               </label>
             </div>
 
-            {/* Submit Button */}
-            <button
-              onClick={handleSubmitTask}
-              disabled={loading || (!imageData && !videoData)}
-              className="w-full py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-3 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 neon-glow neon-glow-hover active:scale-[0.98] disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:neon-glow-0"
-            >
-              {loading && loadingMessage ? (
-                <>
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {loadingMessage}
-                </>
-              ) : (
-                <>
-                  <i className="fas fa-paper-plane"></i>
-                  Submit Task
-                </>
-              )}
-            </button>
+            {/* Submit and Reset Buttons */}
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+              <button
+                onClick={handleSubmitTask}
+                disabled={loading || (!imageData && !videoData)}
+                className="w-full md:w-auto px-8 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 neon-glow neon-glow-hover active:scale-[0.98] disabled:bg-gray-800 disabled:text-gray-500 disabled:cursor-not-allowed disabled:neon-glow-0"
+              >
+                {loading && loadingMessage ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {loadingMessage}
+                  </>
+                ) : null}
+              </button>
+              <button
+                onClick={handleReset}
+                className="w-full md:w-auto px-6 py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white active:scale-[0.98]"
+              >
+                <i className="fas fa-redo"></i> Reset
+              </button>
+            </div>
 
           </div>
         </section>
