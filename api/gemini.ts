@@ -50,9 +50,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     switch (action) {
       case 'validate': {
-        // For validation, use the client-provided key from request body or params
+        // For validation, use the client-provided key from request body
+        // The validate action may also receive apiKey in params for backward compatibility
         const { apiKey: paramKey } = params;
         const keyToUse = clientApiKey || paramKey || apiKey;
+        if (!keyToUse) {
+          return res.status(400).json({ error: 'API key is required for validation' });
+        }
         const validationAI = new GoogleGenAI({ apiKey: keyToUse });
         
         try {

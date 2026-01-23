@@ -22,12 +22,18 @@ const callGeminiAPI = async (action: string, params: any): Promise<any> => {
   const baseUrl = getApiBaseUrl();
   const apiKey = getApiKey();
   
+  // If apiKey is provided in params, use it; otherwise use localStorage key
+  const apiKeyToUse = params.apiKey || apiKey;
+  
+  // Remove apiKey from params to avoid duplication
+  const { apiKey: _, ...restParams } = params;
+  
   const response = await fetch(`${baseUrl}/api/gemini`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ action, apiKey, ...params }),
+    body: JSON.stringify({ action, apiKey: apiKeyToUse, ...restParams }),
   });
 
   const data = await response.json();
@@ -39,11 +45,13 @@ const callGeminiAPI = async (action: string, params: any): Promise<any> => {
   return data;
 };
 
-export const validateApiKey = async (apiKey: string): Promise<boolean> => {
-  if (!apiKey) return false;
+export const validateApiKey = async (apiKey?: string): Promise<boolean> => {
+  // Use provided apiKey or get from localStorage
+  const keyToValidate = apiKey || getApiKey();
+  if (!keyToValidate) return false;
   
   try {
-    const result = await callGeminiAPI('validate', { apiKey });
+    const result = await callGeminiAPI('validate', { apiKey: keyToValidate });
     return result.valid === true;
   } catch (error) {
     console.warn("API Key validation check failed:", error);
