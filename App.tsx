@@ -35,14 +35,25 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<EditMode>('reference');
   const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState(false);
 
-  // Load history from IndexedDB on initial load
+  // Check authentication on initial load
   useEffect(() => {
-    const loadHistory = async () => {
-      const savedHistory = await getHistoryFromDb();
-      setHistory(savedHistory);
+    const checkAuthentication = async () => {
+      const savedPassword = await getPasswordFromDb();
+      setIsAuthenticated(savedPassword !== null);
     };
-    loadHistory();
+    checkAuthentication();
   }, []);
+
+  // Load history from IndexedDB on initial load (only if authenticated)
+  useEffect(() => {
+    if (isAuthenticated) {
+      const loadHistory = async () => {
+        const savedHistory = await getHistoryFromDb();
+        setHistory(savedHistory);
+      };
+      loadHistory();
+    }
+  }, [isAuthenticated]);
   
   const handleModeChange = (newMode: EditMode) => {
     setMode(newMode);
