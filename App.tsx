@@ -35,25 +35,14 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<EditMode>('reference');
   const [isHistorySidebarOpen, setIsHistorySidebarOpen] = useState(false);
 
-  // Check authentication on initial load
-  useEffect(() => {
-    const checkAuthentication = async () => {
-      const savedPassword = await getPasswordFromDb();
-      setIsAuthenticated(savedPassword !== null);
-    };
-    checkAuthentication();
-  }, []);
-
   // Load history from IndexedDB on initial load
   useEffect(() => {
-    if (isAuthenticated) {
-      const loadHistory = async () => {
-        const savedHistory = await getHistoryFromDb();
-        setHistory(savedHistory);
-      };
-      loadHistory();
-    }
-  }, [isAuthenticated]);
+    const loadHistory = async () => {
+      const savedHistory = await getHistoryFromDb();
+      setHistory(savedHistory);
+    };
+    loadHistory();
+  }, []);
   
   const handleModeChange = (newMode: EditMode) => {
     setMode(newMode);
@@ -328,6 +317,19 @@ const App: React.FC = () => {
         {label}
     </button>
   );
+
+  // Show password page if not authenticated
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-[#020408] flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <PasswordPage onPasswordVerified={() => setIsAuthenticated(true)} />;
+  }
 
   // Render Settings page
   if (activeApp === 'settings') {
