@@ -345,9 +345,7 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
-        <div className="pl-24">
-          <FuckifyPage />
-        </div>
+        <FuckifyPage />
       </div>
     );
   }

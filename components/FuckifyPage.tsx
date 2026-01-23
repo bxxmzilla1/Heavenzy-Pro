@@ -83,9 +83,11 @@ export const FuckifyPage: React.FC = () => {
     const [predictions, setPredictions] = useState<Prediction[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [hoveredImageUrl, setHoveredImageUrl] = useState<string | null>(null);
+    const [hoveredMediaUrl, setHoveredMediaUrl] = useState<string | null>(null);
     const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
+    const [hoveredMediaType, setHoveredMediaType] = useState<'image' | 'video' | null>(null);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+    const [activeTab, setActiveTab] = useState<'all' | 'images' | 'videos'>('all');
 
     const fetchHistory = useCallback(async () => {
       const WAVESPEED_API_KEY = localStorage.getItem('wavespeedApiKey');
@@ -110,11 +112,14 @@ export const FuckifyPage: React.FC = () => {
           throw new Error(errorData.message || `Failed to fetch history with status ${response.status}`);
         }
         const result = await response.json();
-        // Filter for alibaba/wan-2.6/image-edit model
-        const imagePredictions = result.data.items.filter((p: Prediction) => 
-          p.model && p.model.includes('alibaba/wan-2.6/image-edit')
+        // Filter for both image-edit and image-to-video models
+        const filteredPredictions = result.data.items.filter((p: Prediction) => 
+          p.model && (
+            p.model.includes('alibaba/wan-2.6/image-edit') ||
+            p.model.includes('wavespeed-ai/wan-2.2-spicy/image-to-video')
+          )
         );
-        setPredictions(imagePredictions);
+        setPredictions(filteredPredictions);
       } catch (err: any) {
         setError(err.message || "An unknown error occurred while fetching history.");
       } finally {
@@ -124,6 +129,26 @@ export const FuckifyPage: React.FC = () => {
 
     useEffect(() => {
       fetchHistory();
+      
+      // Listen for history updates when generations complete
+      const handleHistoryUpdate = () => {
+        // Small delay to ensure API has indexed the new generation
+        setTimeout(() => {
+          fetchHistory();
+        }, 2000);
+      };
+      
+      window.addEventListener('fuckifyHistoryUpdate', handleHistoryUpdate);
+      
+      // Periodic refresh when sidebar is open (every 10 seconds)
+      const refreshInterval = setInterval(() => {
+        fetchHistory();
+      }, 10000);
+      
+      return () => {
+        window.removeEventListener('fuckifyHistoryUpdate', handleHistoryUpdate);
+        clearInterval(refreshInterval);
+      };
     }, [fetchHistory]);
 
     const StatusIndicator = ({ status }: { status: string }) => {
@@ -208,14 +233,16 @@ export const FuckifyPage: React.FC = () => {
 
       for (let i = 0; i < selectedPredictions.length; i++) {
         const pred = selectedPredictions[i];
-        const imageUrl = pred.outputs[0];
+        const mediaUrl = pred.outputs[0];
+        const isVideo = pred.model && pred.model.includes('image-to-video');
         const date = new Date(pred.created_at);
         const dateStr = date.toISOString().split('T')[0];
         const timeStr = date.toTimeString().split(' ')[0].replace(/:/g, '-');
-        const filename = `fuckify_image_${dateStr}_${timeStr}_${pred.id.slice(0, 8)}.png`;
+        const extension = isVideo ? 'mp4' : 'png';
+        const filename = `fuckify_${isVideo ? 'video' : 'image'}_${dateStr}_${timeStr}_${pred.id.slice(0, 8)}.${extension}`;
 
         try {
-          const response = await fetch(imageUrl);
+          const response = await fetch(mediaUrl);
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -230,7 +257,7 @@ export const FuckifyPage: React.FC = () => {
             await new Promise(resolve => setTimeout(resolve, 300));
           }
         } catch (err) {
-          console.error(`Failed to download image ${pred.id}:`, err);
+          console.error(`Failed to download ${isVideo ? 'video' : 'image'} ${pred.id}:`, err);
         }
       }
 
@@ -265,6 +292,42 @@ export const FuckifyPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Tabs */}
+            <div className="px-4 py-3 border-b border-gray-800">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setActiveTab('all')}
+                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    activeTab === 'all'
+                      ? 'bg-pink-600 text-white'
+                      : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-800'
+                  }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setActiveTab('images')}
+                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    activeTab === 'images'
+                      ? 'bg-pink-600 text-white'
+                      : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-800'
+                  }`}
+                >
+                  Images
+                </button>
+                <button
+                  onClick={() => setActiveTab('videos')}
+                  className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    activeTab === 'videos'
+                      ? 'bg-pink-600 text-white'
+                      : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-800'
+                  }`}
+                >
+                  Videos
+                </button>
+              </div>
+            </div>
+
             {selectedCount > 0 && (
               <div className="px-4 py-3 border-b border-gray-800 bg-pink-500/10">
                 <button
@@ -272,7 +335,7 @@ export const FuckifyPage: React.FC = () => {
                   className="w-full py-2 px-4 bg-pink-600 hover:bg-pink-500 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <i className="fas fa-download"></i>
-                  Download {selectedCount} {selectedCount === 1 ? 'Image' : 'Images'}
+                  Download {selectedCount} {selectedCount === 1 ? 'Item' : 'Items'}
                 </button>
               </div>
             )}
@@ -285,11 +348,29 @@ export const FuckifyPage: React.FC = () => {
               )}
               {error && <p className="text-red-400 text-center p-4 bg-red-500/10 rounded-lg">{error}</p>}
               {!isLoading && !error && predictions.length === 0 && (
-                <p className="text-gray-500 text-center mt-8">No recent image generations found.</p>
+                <p className="text-gray-500 text-center mt-8">No recent generations found.</p>
               )}
-              {!isLoading && !error && predictions.length > 0 && (
-                <div className="space-y-6">
-                  {groupPredictionsByDate(predictions).map(({ date, predictions: datePredictions }) => (
+              {!isLoading && !error && predictions.length > 0 && (() => {
+                // Filter predictions based on active tab
+                const filteredPredictions = predictions.filter((p: Prediction) => {
+                  if (activeTab === 'all') return true;
+                  const isVideo = p.model && p.model.includes('image-to-video');
+                  if (activeTab === 'images') return !isVideo;
+                  if (activeTab === 'videos') return isVideo;
+                  return true;
+                });
+
+                if (filteredPredictions.length === 0) {
+                  return (
+                    <p className="text-gray-500 text-center mt-8">
+                      No {activeTab === 'all' ? '' : activeTab} generations found.
+                    </p>
+                  );
+                }
+
+                return (
+                  <div className="space-y-6">
+                    {groupPredictionsByDate(filteredPredictions).map(({ date, predictions: datePredictions }) => (
                     <div key={date} className="space-y-3">
                       <div className="flex items-center gap-3 py-2">
                         <div className="flex-grow border-t border-pink-500/30"></div>
@@ -303,7 +384,16 @@ export const FuckifyPage: React.FC = () => {
                         {datePredictions.map(pred => (
                           <li
                             key={pred.id}
-                            onClick={() => pred.status === 'completed' && pred.outputs.length > 0 && onSelectImage(pred.outputs[0])}
+                            onClick={() => {
+                              if (pred.status === 'completed' && pred.outputs.length > 0) {
+                                const isVideo = pred.model && pred.model.includes('image-to-video');
+                                // For videos, we'll just close the sidebar for now
+                                // VideoMode can be enhanced later to accept a selected video URL
+                                if (!isVideo) {
+                                  onSelectImage(pred.outputs[0]);
+                                }
+                              }
+                            }}
                             onMouseEnter={(e) => {
                               if (pred.status === 'completed' && pred.outputs.length > 0) {
                                 const rect = e.currentTarget.getBoundingClientRect();
@@ -320,12 +410,15 @@ export const FuckifyPage: React.FC = () => {
                                 }
                                 if (y < 20) y = 20;
                                 
-                                setHoveredImageUrl(pred.outputs[0]);
+                                const isVideo = pred.model && pred.model.includes('image-to-video');
+                                setHoveredMediaUrl(pred.outputs[0]);
+                                setHoveredMediaType(isVideo ? 'video' : 'image');
                                 setHoverPosition({ x, y });
                               }
                             }}
                             onMouseLeave={() => {
-                              setHoveredImageUrl(null);
+                              setHoveredMediaUrl(null);
+                              setHoveredMediaType(null);
                               setHoverPosition(null);
                             }}
                             className={`bg-[#0f1115] border border-white/5 p-3 rounded-xl transition-all relative ${
@@ -352,16 +445,35 @@ export const FuckifyPage: React.FC = () => {
                             )}
                             
                             <div className="flex items-center gap-4">
-                              <div className="w-16 h-16 bg-black/40 rounded-lg flex items-center justify-center text-gray-600">
+                              <div className="w-16 h-16 bg-black/40 rounded-lg flex items-center justify-center text-gray-600 relative overflow-hidden">
                                 {pred.status === 'completed' && pred.outputs.length > 0 ? (
-                                  <img src={pred.outputs[0]} className="w-full h-full object-cover rounded-lg" alt="Generated" />
+                                  (() => {
+                                    const isVideo = pred.model && pred.model.includes('image-to-video');
+                                    if (isVideo) {
+                                      return (
+                                        <>
+                                          <video src={pred.outputs[0]} className="w-full h-full object-cover rounded-lg" muted />
+                                          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                            <i className="fas fa-play text-white text-xl"></i>
+                                          </div>
+                                        </>
+                                      );
+                                    } else {
+                                      return <img src={pred.outputs[0]} className="w-full h-full object-cover rounded-lg" alt="Generated" />;
+                                    }
+                                  })()
                                 ) : (
-                                  <i className="fas fa-image text-2xl"></i>
+                                  (() => {
+                                    const isVideo = pred.model && pred.model.includes('image-to-video');
+                                    return <i className={`fas ${isVideo ? 'fa-video' : 'fa-image'} text-2xl`}></i>;
+                                  })()
                                 )}
                               </div>
                               <div className="flex-grow">
                                 <div className="flex justify-between items-start">
-                                  <p className="text-sm font-semibold text-gray-300">Image Generation</p>
+                                  <p className="text-sm font-semibold text-gray-300">
+                                    {pred.model && pred.model.includes('image-to-video') ? 'Video Generation' : 'Image Generation'}
+                                  </p>
                                   <StatusIndicator status={pred.status} />
                                 </div>
                                 <p className="text-xs text-gray-500 mt-1">
@@ -377,17 +489,18 @@ export const FuckifyPage: React.FC = () => {
                         ))}
                       </ul>
                     </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
             <div className="p-4 border-t border-gray-800 text-center text-xs text-gray-600">
-              <p>Showing image generations from alibaba/wan-2.6/image-edit.</p>
+              <p>Showing generations from alibaba/wan-2.6/image-edit and wavespeed-ai/wan-2.2-spicy/image-to-video models.</p>
             </div>
           </div>
         </div>
         
-        {hoveredImageUrl && hoverPosition && (
+        {hoveredMediaUrl && hoverPosition && (
           <div 
             className="fixed z-[70] pointer-events-none animate-in fade-in duration-200"
             style={{
@@ -397,11 +510,22 @@ export const FuckifyPage: React.FC = () => {
             }}
           >
             <div className="bg-[#0f1115] border border-pink-500/30 rounded-xl p-4 shadow-lg">
-              <img 
-                src={hoveredImageUrl} 
-                className="w-full rounded-lg max-h-[400px] object-contain"
-                alt="Preview"
-              />
+              {hoveredMediaType === 'video' ? (
+                <video 
+                  src={hoveredMediaUrl} 
+                  className="w-full rounded-lg max-h-[400px] object-contain"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+              ) : (
+                <img 
+                  src={hoveredMediaUrl} 
+                  className="w-full rounded-lg max-h-[400px] object-contain"
+                  alt="Preview"
+                />
+              )}
             </div>
           </div>
         )}
@@ -469,8 +593,8 @@ export const FuckifyPage: React.FC = () => {
       )}
 
       {/* Body Section - Adjusted for sidebar */}
-      <div className="pt-20 mt-16 md:ml-64">
-        <div className="container mx-auto max-w-7xl">
+      <div className="pt-20 md:ml-64">
+        <div className="container mx-auto max-w-7xl px-4">
           {activeMenu === 'imageMode' && (
             <ImageMode
               onSelectHistoryImage={handleSelectHistoryImage}
