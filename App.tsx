@@ -13,6 +13,7 @@ import { MinusCircleIcon } from './components/IconComponents';
 import { LeftSidebar } from './components/LeftSidebar';
 import ReelzeyApp from './components/ReelzeyApp';
 import { SettingsPage } from './components/SettingsPage';
+import { VoicerPage } from './components/VoicerPage';
 
 const App: React.FC = () => {
   const [activeApp, setActiveApp] = useState<string>('halyxis');
@@ -321,6 +322,18 @@ const App: React.FC = () => {
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
         <div className="pl-24">
           <SettingsPage />
+        </div>
+      </div>
+    );
+  }
+
+  // Render Voicer app
+  if (activeApp === 'voicer') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <div className="pl-24">
+          <VoicerPage />
         </div>
       </div>
     );
