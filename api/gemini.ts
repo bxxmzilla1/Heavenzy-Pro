@@ -36,22 +36,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Get API key from environment variable (server-side only)
-  const apiKey = process.env.GEMINI_API_KEY;
+  // Get API key from request body (client-provided) or environment variable (fallback)
+  const { action, apiKey: clientApiKey, ...params } = req.body;
+  const apiKey = clientApiKey || process.env.GEMINI_API_KEY;
+  
   if (!apiKey) {
-    return res.status(500).json({ error: 'API_KEY is not configured on the server' });
+    return res.status(500).json({ error: 'API_KEY is not configured. Please set it in Settings.' });
   }
 
   try {
-    const { action, ...params } = req.body;
 
     const ai = new GoogleGenAI({ apiKey });
 
     switch (action) {
       case 'validate': {
-        const { apiKey: clientKey } = params;
-        // For validation, use the client-provided key if available
-        const keyToUse = clientKey || apiKey;
+        // For validation, use the client-provided key from request body or params
+        const { apiKey: paramKey } = params;
+        const keyToUse = clientApiKey || paramKey || apiKey;
         const validationAI = new GoogleGenAI({ apiKey: keyToUse });
         
         try {

@@ -9,15 +9,25 @@ const getApiBaseUrl = (): string => {
   return '';
 };
 
+// Helper function to get API key from localStorage
+const getApiKey = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('geminiApiKey');
+  }
+  return null;
+};
+
 // Helper function to call the serverless API
 const callGeminiAPI = async (action: string, params: any): Promise<any> => {
   const baseUrl = getApiBaseUrl();
+  const apiKey = getApiKey();
+  
   const response = await fetch(`${baseUrl}/api/gemini`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ action, ...params }),
+    body: JSON.stringify({ action, apiKey, ...params }),
   });
 
   const data = await response.json();
