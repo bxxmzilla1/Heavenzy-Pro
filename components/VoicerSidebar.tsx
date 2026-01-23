@@ -27,9 +27,6 @@ const VoicerSidebar: React.FC<VoicerSidebarProps> = ({ activeMenu, onMenuChange 
       {/* Desktop: Left Sidebar - Adjusted for main app left sidebar */}
       <aside className="hidden md:flex fixed left-24 top-16 bottom-0 w-64 bg-black/80 backdrop-blur-sm border-r border-blue-500/20 z-30">
         <nav className="w-full p-4 flex flex-col gap-2">
-          <div className="mb-4 px-4">
-            <h2 className="text-xl font-semibold text-white">Voicer</h2>
-          </div>
           {menuItems.map(item => (
             <a
               href="#"

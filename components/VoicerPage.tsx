@@ -18,7 +18,7 @@ export const VoicerPage: React.FC = () => {
       <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-blue-500/20 fixed top-0 left-24 right-0 z-40">
         <div className="flex items-center justify-between h-16">
           <a href="#" onClick={(e) => { e.preventDefault(); setActiveMenu('voiceCloner'); }} className="flex items-center">
-            <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">Voicer</span>
+            <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">Voizer</span>
           </a>
         </div>
       </header>
