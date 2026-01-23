@@ -126,8 +126,6 @@ const Layout: React.FC = () => {
                 <span className="text-gray-500">N/A</span>
               )}
             </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4">
             <button 
               onClick={() => setIsHistoryVisible(true)} 
               className={`p-2 rounded-full transition-colors relative ${
@@ -135,7 +133,7 @@ const Layout: React.FC = () => {
                   ? 'text-purple-400 bg-purple-500/20 pulse-highlight' 
                   : 'text-gray-400 hover:text-white hover:bg-gray-800'
               }`}
-              title="View History"
+              title="Generation History"
             >
               <i className="fas fa-history text-lg sm:text-xl"></i>
             </button>
