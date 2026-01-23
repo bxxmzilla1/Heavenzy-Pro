@@ -13,6 +13,7 @@ import { MinusCircleIcon } from './components/IconComponents';
 import { CreatorSettingsModal } from './components/CreatorSettingsModal';
 import { LeftSidebar } from './components/LeftSidebar';
 import ReelzeyApp from './components/ReelzeyApp';
+import { SettingsPage } from './components/SettingsPage';
 
 const App: React.FC = () => {
   const [activeApp, setActiveApp] = useState<string>('halyxis');
@@ -314,6 +315,18 @@ const App: React.FC = () => {
         {label}
     </button>
   );
+
+  // Render Settings page
+  if (activeApp === 'settings') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <div className="pl-24">
+          <SettingsPage />
+        </div>
+      </div>
+    );
+  }
 
   // Render Reelzey app
   if (activeApp === 'reelzey') {
