@@ -8,7 +8,8 @@ const VALID_PASSWORDS = [
   'heavenzy2026@gmail.com',
   'novateam2026@gmail.com',
   'mezz2026@gmail.com',
-  'hany2026@gmail.com'
+  'hany2026@gmail.com',
+  'contact@elysiumagency.co.uk'
 ];
 
 export const PasswordPage: React.FC<PasswordPageProps> = ({ onPasswordVerified }) => {
