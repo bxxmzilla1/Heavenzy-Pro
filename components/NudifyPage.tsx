@@ -88,6 +88,7 @@ export const NudifyPage: React.FC = () => {
     const [hoveredMediaType, setHoveredMediaType] = useState<'image' | 'video' | null>(null);
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
+    const [previewMedia, setPreviewMedia] = useState<{ url: string; type: 'image' | 'video' } | null>(null);
 
     const fetchHistory = useCallback(async () => {
       const WAVESPEED_API_KEY = localStorage.getItem('wavespeedApiKey');
@@ -367,14 +368,18 @@ export const NudifyPage: React.FC = () => {
                         {datePredictions.map(pred => (
                           <li
                             key={pred.id}
-                            onClick={() => {
+                            onClick={(e) => {
+                              // Don't trigger preview if clicking on checkbox
+                              if ((e.target as HTMLElement).closest('.checkbox-container')) {
+                                return;
+                              }
                               if (pred.status === 'completed' && pred.outputs.length > 0) {
                                 const isVideo = pred.model && pred.model.includes('image-to-video');
-                                // For videos, we'll just close the sidebar for now
-                                // VideoMode can be enhanced later to accept a selected video URL
-                                if (!isVideo) {
-                                  onSelectImage(pred.outputs[0]);
-                                }
+                                // Show preview bubble card
+                                setPreviewMedia({
+                                  url: pred.outputs[0],
+                                  type: isVideo ? 'video' : 'image'
+                                });
                               }
                             }}
                             onMouseEnter={(e) => {
@@ -412,7 +417,7 @@ export const NudifyPage: React.FC = () => {
                           >
                             {pred.status === 'completed' && pred.outputs.length > 0 && (
                               <div 
-                                className="absolute top-2 left-2 z-10"
+                                className="absolute top-2 left-2 z-10 checkbox-container"
                                 onClick={(e) => toggleSelection(pred.id, e)}
                               >
                                 <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
@@ -509,6 +514,80 @@ export const NudifyPage: React.FC = () => {
                   alt="Preview"
                 />
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Preview Bubble Card Modal */}
+        {previewMedia && (
+          <div 
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[80] flex items-center justify-center p-4 animate-in fade-in duration-200"
+            onClick={() => setPreviewMedia(null)}
+          >
+            <div 
+              className="bg-[#0f1115] border border-pink-500/30 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-pink-500/20">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <i className={`fas ${previewMedia.type === 'video' ? 'fa-video' : 'fa-image'} text-pink-400`}></i>
+                  Preview {previewMedia.type === 'video' ? 'Video' : 'Image'}
+                </h3>
+                <button
+                  onClick={() => setPreviewMedia(null)}
+                  className="text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-800"
+                >
+                  <i className="fas fa-times text-xl"></i>
+                </button>
+              </div>
+
+              {/* Media Content */}
+              <div className="p-6 flex items-center justify-center bg-black/20 min-h-[400px] max-h-[calc(90vh-100px)] overflow-auto">
+                {previewMedia.type === 'video' ? (
+                  <video 
+                    src={previewMedia.url} 
+                    className="max-w-full max-h-[70vh] rounded-lg object-contain"
+                    controls
+                    autoPlay
+                    loop
+                  />
+                ) : (
+                  <img 
+                    src={previewMedia.url} 
+                    className="max-w-full max-h-[70vh] rounded-lg object-contain"
+                    alt="Preview"
+                  />
+                )}
+              </div>
+
+              {/* Footer Actions */}
+              <div className="flex items-center justify-end gap-3 p-4 border-t border-pink-500/20">
+                <button
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = previewMedia.url;
+                    link.download = `nudify-${previewMedia.type}-${Date.now()}.${previewMedia.type === 'video' ? 'mp4' : 'png'}`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  className="px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <i className="fas fa-download"></i>
+                  Download
+                </button>
+                <button
+                  onClick={() => {
+                    setPreviewMedia(null);
+                    onSelectImage(previewMedia.url);
+                  }}
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <i className="fas fa-check"></i>
+                  Use This
+                </button>
+              </div>
             </div>
           </div>
         )}
