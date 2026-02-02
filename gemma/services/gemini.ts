@@ -29,9 +29,12 @@ const getSkinToneDescription = (value: number): string => {
 };
 
 export const generatePortrait = async (config: GenerationConfig): Promise<string> => {
-  // Always create a new instance to ensure we capture the selected key
-  // The key is injected into process.env.API_KEY by the environment after selection
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // Get API key from localStorage (set in app settings)
+  const apiKey = localStorage.getItem('geminiApiKey');
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error('Gemini API key not found. Please set it in Settings.');
+  }
+  const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
 
   const skinDescription = getSkinToneDescription(config.skinTone);
 

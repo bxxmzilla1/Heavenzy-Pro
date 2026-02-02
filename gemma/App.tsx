@@ -14,7 +14,6 @@ import {
 } from './types';
 import { generatePortrait } from './services/gemini';
 import { Button } from './components/Button';
-import { ApiKeySelection } from './components/ApiKeySelection';
 import { HistorySidebar } from './components/HistorySidebar';
 import { Camera, Download, Wand2, User, AlertCircle, Maximize2, Palette, Sparkles, History } from 'lucide-react';
 
@@ -31,7 +30,6 @@ const loadHistory = (): HistoryItem[] => {
 };
 
 const App: React.FC = () => {
-  const [apiKeyReady, setApiKeyReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +59,13 @@ const App: React.FC = () => {
   }, [history]);
 
   const handleGenerate = async () => {
+    // Check if API key is set
+    const apiKey = localStorage.getItem('geminiApiKey');
+    if (!apiKey || apiKey.trim() === '') {
+      setError('Gemini API key not found. Please set it in Settings.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -75,11 +80,12 @@ const App: React.FC = () => {
     } catch (err: any) {
       console.error(err);
       const errorMessage = err.message || err.toString();
-      if (errorMessage.includes('PERMISSION_DENIED') || errorMessage.includes('not found')) {
-        setError("Permission denied. Please select a valid API key from a project with billing enabled and try again.");
-        setApiKeyReady(false);
+      if (errorMessage.includes('API key not found') || errorMessage.includes('not found')) {
+        setError('Gemini API key not found. Please set it in Settings.');
+      } else if (errorMessage.includes('PERMISSION_DENIED')) {
+        setError("Permission denied. Please check your API key in Settings and ensure billing is enabled.");
       } else {
-        setError("Failed to generate image. Please try again.");
+        setError(errorMessage || "Failed to generate image. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -107,10 +113,6 @@ const App: React.FC = () => {
       setHistory([]);
     }
   };
-
-  if (!apiKeyReady) {
-    return <ApiKeySelection onKeySelected={() => setApiKeyReady(true)} />;
-  }
 
   return (
     <div className="min-h-screen bg-black text-gray-100 font-sans selection:bg-white selection:text-black">
