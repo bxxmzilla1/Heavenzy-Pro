@@ -8,24 +8,21 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onToggleHistory }) => {
   return (
-    <header className="bg-[#020408]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-20">
-      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+    <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-teal-500/20 fixed top-0 left-24 right-0 z-40">
+      <div className="flex items-center justify-between h-16">
         <div className="flex items-center gap-3">
-          <SparklesIcon className="w-8 h-8 text-teal-400" />
-          <h1 className="text-xl font-bold tracking-tight text-white hidden sm:block">
-            Halyxis
-          </h1>
-          <h1 className="text-xl font-bold tracking-tight text-white sm:hidden">
-            Halyxis
-          </h1>
-          <button
-              onClick={onToggleHistory}
-              className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors ml-2"
-              title="Generation History"
-          >
-              <HistoryIcon className="w-5 h-5" />
-          </button>
+          <a href="#" onClick={(e) => { e.preventDefault(); }} className="flex items-center">
+            <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-teal-400 via-teal-500 to-teal-400 bg-clip-text text-transparent">Halyxis</span>
+          </a>
         </div>
+        <button
+          onClick={onToggleHistory}
+          className={`p-2 rounded-lg transition-colors relative flex items-center gap-2 text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800/50`}
+          title="Generation History"
+        >
+          <HistoryIcon className="w-5 h-5" />
+          <span className="text-xs font-medium hidden sm:inline">History</span>
+        </button>
       </div>
     </header>
   );
