@@ -6,7 +6,7 @@
  * @param quality - JPEG/PNG quality 0-1 (default: 0.85 for JPEG, 0.9 for PNG)
  * @returns Promise resolving to compressed File with preserved format
  */
-const compressImage = (file: File, maxWidth: number = 4096, maxHeight: number = 4096, quality: number = 0.8): Promise<File> => {
+const compressImage = (file: File, maxWidth: number = 2560, maxHeight: number = 2560, quality: number = 0.7): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -35,11 +35,29 @@ const compressImage = (file: File, maxWidth: number = 4096, maxHeight: number = 
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Preserve PNG format for PNG files, use JPEG for others
+        // For better compression, convert PNG to JPEG unless transparency is needed
+        // Check if PNG has transparency by checking alpha channel
         const isPNG = file.type === 'image/png';
-        const outputType = isPNG ? 'image/png' : 'image/jpeg';
-        // PNG compression uses a different quality scale (0-1, but typically 0.9 works well)
-        const compressionQuality = isPNG ? Math.min(quality, 0.95) : quality;
+        let hasTransparency = false;
+        if (isPNG) {
+          try {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            for (let i = 3; i < data.length; i += 4) {
+              if (data[i] < 255) {
+                hasTransparency = true;
+                break;
+              }
+            }
+          } catch (e) {
+            // If we can't check, assume it might have transparency
+            hasTransparency = true;
+          }
+        }
+        
+        const outputType = (isPNG && hasTransparency) ? 'image/png' : 'image/jpeg';
+        // More aggressive compression: lower quality for JPEG, moderate for PNG
+        const compressionQuality = (isPNG && hasTransparency) ? 0.85 : quality;
 
         canvas.toBlob(
           (blob) => {
@@ -47,12 +65,39 @@ const compressImage = (file: File, maxWidth: number = 4096, maxHeight: number = 
               reject(new Error('Failed to compress image'));
               return;
             }
-            // Create a new File preserving the original format
-            const compressedFile = new File([blob], file.name, {
-              type: outputType,
-              lastModified: Date.now(),
-            });
-            resolve(compressedFile);
+            // Check file size and compress more if needed (target: ~1MB per image)
+            const maxSizeBytes = 1024 * 1024; // 1MB
+            if (blob.size > maxSizeBytes && !hasTransparency) {
+              // Recursively compress with lower quality if still too large
+              const newQuality = Math.max(0.5, compressionQuality - 0.1);
+              canvas.toBlob(
+                (smallerBlob) => {
+                  if (!smallerBlob) {
+                    // Fallback to original blob if recompression fails
+                    const compressedFile = new File([blob], file.name, {
+                      type: outputType,
+                      lastModified: Date.now(),
+                    });
+                    resolve(compressedFile);
+                    return;
+                  }
+                  const compressedFile = new File([smallerBlob], file.name, {
+                    type: outputType,
+                    lastModified: Date.now(),
+                  });
+                  resolve(compressedFile);
+                },
+                outputType,
+                newQuality
+              );
+            } else {
+              // Create a new File preserving the original format
+              const compressedFile = new File([blob], file.name, {
+                type: outputType,
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            }
           },
           outputType,
           compressionQuality
