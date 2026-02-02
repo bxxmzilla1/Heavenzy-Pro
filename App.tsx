@@ -15,6 +15,7 @@ import ReelzeyApp from './components/ReelzeyApp';
 import { SettingsPage } from './components/SettingsPage';
 import { VoicerPage } from './components/VoicerPage';
 import { NudifyPage } from './components/NudifyPage';
+import { GemmaPage } from './components/GemmaPage';
 import { PasswordPage } from './components/PasswordPage';
 
 const App: React.FC = () => {
@@ -372,6 +373,16 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
         <NudifyPage />
+      </div>
+    );
+  }
+
+  // Render Gemma app
+  if (activeApp === 'gemma') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-orange-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <GemmaPage />
       </div>
     );
   }

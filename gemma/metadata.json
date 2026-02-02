@@ -1,0 +1,5 @@
+{
+  "name": "GEMMA",
+  "description": "High-resolution synthetic studio portrait generator using Gemini. Create photorealistic portraits with detailed customization.",
+  "requestFramePermissions": []
+}

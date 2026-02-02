@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SparklesIcon, VideoIcon, SettingsIcon, MicrophoneIcon, NudifyIcon } from './IconComponents';
+import { SparklesIcon, VideoIcon, SettingsIcon, MicrophoneIcon, NudifyIcon, GemmaIcon } from './IconComponents';
 
 interface LeftSidebarProps {
   activeApp: string;
@@ -13,6 +13,7 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
     { id: 'reelzey', label: 'Reelzey', icon: VideoIcon, color: 'purple' },
     { id: 'voicer', label: 'Voizer', icon: MicrophoneIcon, color: 'blue' },
     { id: 'nudify', label: 'Nudify', icon: NudifyIcon, color: 'pink' },
+    { id: 'gemma', label: 'Gemma', icon: GemmaIcon, color: 'orange' },
     { id: 'settings', label: 'Settings', icon: SettingsIcon, color: 'gray' },
   ];
 
@@ -61,6 +62,14 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
             text: 'text-pink-400',
             hoverText: 'group-hover:text-pink-300',
             ring: 'ring-pink-500/50',
+          },
+          orange: {
+            bg: 'bg-orange-500/10',
+            border: 'border-orange-500/20',
+            hoverBg: 'hover:bg-orange-500/20',
+            text: 'text-orange-400',
+            hoverText: 'group-hover:text-orange-300',
+            ring: 'ring-orange-500/50',
           },
         };
         const colors = colorClasses[item.color as keyof typeof colorClasses] || colorClasses.teal;
