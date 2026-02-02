@@ -48,11 +48,11 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({ isOpen, onClose,
                    onClick={() => { onSelect(item); onClose(); }} 
                    className="w-full text-left group bg-[#0f1115] rounded-xl overflow-hidden border border-white/5 hover:border-teal-500/50 hover:shadow-lg hover:shadow-teal-900/10 transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-teal-500"
                 >
-                   <div className="relative bg-[#050608] w-full aspect-video overflow-hidden">
+                   <div className="relative bg-[#050608] w-full overflow-hidden flex items-center justify-center p-2">
                       <img 
                         src={item.imageUrl} 
                         alt="Generated result" 
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" 
+                        className="w-full h-auto max-h-80 object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-500" 
                       />
                       {item.referenceImageUrl && (
                         <div className="absolute bottom-2 left-2 w-12 h-12 border border-white/10 rounded-lg overflow-hidden shadow-lg bg-black/50 backdrop-blur-md">
