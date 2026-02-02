@@ -36,9 +36,9 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({ history, onSelec
               <button
                 key={item.id}
                 onClick={() => onSelect(item)}
-                className="w-full h-20 bg-black rounded-lg overflow-hidden group relative border-2 border-transparent hover:border-white focus:border-white focus:outline-none transition-all"
+                className="w-full bg-black rounded-lg overflow-hidden group relative border-2 border-transparent hover:border-white focus:border-white focus:outline-none transition-all flex items-center justify-center p-2"
               >
-                <img src={item.imageUrl} alt="Generated portrait thumbnail" className="w-full h-full object-cover object-center" />
+                <img src={item.imageUrl} alt="Generated portrait thumbnail" className="w-full h-auto max-h-80 object-contain rounded" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-white text-xs font-bold">View</span>
                 </div>
