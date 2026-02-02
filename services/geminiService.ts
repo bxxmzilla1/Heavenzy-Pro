@@ -36,7 +36,23 @@ const callGeminiAPI = async (action: string, params: any): Promise<any> => {
     body: JSON.stringify({ action, apiKey: apiKeyToUse, ...restParams }),
   });
 
-  const data = await response.json();
+  // Handle 413 Content Too Large error specifically
+  if (response.status === 413) {
+    throw new Error('The images you uploaded are too large. Please try using smaller images or compress them before uploading.');
+  }
+
+  // Try to parse JSON, but handle non-JSON error responses gracefully
+  let data;
+  try {
+    data = await response.json();
+  } catch (error) {
+    // If response is not JSON, try to get text
+    const text = await response.text();
+    if (response.status === 413) {
+      throw new Error('The images you uploaded are too large. Please try using smaller images or compress them before uploading.');
+    }
+    throw new Error(`Server error: ${text || response.statusText}`);
+  }
 
   if (!response.ok) {
     throw new Error(data.error || 'API request failed');

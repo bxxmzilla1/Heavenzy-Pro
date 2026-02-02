@@ -5,7 +5,7 @@ import { ImageUpload } from './components/ImageUpload';
 import { PromptControls } from './components/PromptControls';
 import { ImageDisplay } from './components/ImageDisplay';
 import { editImageWithPrompt, editImageWithPromptOnly, editImageWithMultiplePeople } from './services/geminiService';
-import { fileToBase64, blobToBase64 } from './utils/fileUtils';
+import { fileToBase64, blobToBase64, fileToBase64WithMetadata, blobToBase64WithMetadata } from './utils/fileUtils';
 import type { UploadedImage, AspectRatio, HistoryItem, EditMode } from './types';
 import { saveHistoryItemToDb, getHistoryFromDb, getPasswordFromDb } from './utils/storageUtils';
 import { HistorySidebar } from './components/HistorySidebar';
@@ -73,10 +73,10 @@ const App: React.FC = () => {
     setError(null);
     setGeneratedImage(null);
     try {
-      const base64String = await fileToBase64(file);
+      const { base64, mimeType } = await fileToBase64WithMetadata(file);
       setOriginalImage({
-        base64: base64String,
-        mimeType: file.type,
+        base64,
+        mimeType,
       });
     } catch (err) {
       setError('Failed to process image file. Please try another one.');
@@ -88,10 +88,10 @@ const App: React.FC = () => {
     setError(null);
     setGeneratedImage(null);
     try {
-      const base64String = await fileToBase64(file);
+      const { base64, mimeType } = await fileToBase64WithMetadata(file);
       setReferenceImage({
-        base64: base64String,
-        mimeType: file.type,
+        base64,
+        mimeType,
       });
     } catch (err) {
       setError('Failed to process reference image file. Please try another one.');
@@ -118,10 +118,10 @@ const App: React.FC = () => {
     setError(null);
     setGeneratedImage(null);
     try {
-        const base64String = await fileToBase64(file);
+        const { base64, mimeType } = await fileToBase64WithMetadata(file);
         setMultiPersonImages(currentImages => {
             const newImages = [...currentImages];
-            newImages[index] = { base64: base64String, mimeType: file.type };
+            newImages[index] = { base64, mimeType };
             return newImages;
         });
     } catch (err) {
@@ -162,10 +162,10 @@ const App: React.FC = () => {
             return null;
         }
 
-        const base64String = await blobToBase64(imageBlob);
+        const { base64, mimeType } = await blobToBase64WithMetadata(imageBlob);
         return {
-            base64: base64String,
-            mimeType: imageBlob.type,
+            base64,
+            mimeType,
         };
 
     } catch (err) {
