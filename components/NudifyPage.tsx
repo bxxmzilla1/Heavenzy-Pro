@@ -535,7 +535,7 @@ export const NudifyPage: React.FC = () => {
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-pink-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Fuckify
+              Nudify
             </h1>
             <div className="p-2 rounded-full text-gray-400 bg-gray-800/50 flex items-center text-sm h-9 px-3">
               <i className="fas fa-wallet mr-2 text-pink-400"></i>

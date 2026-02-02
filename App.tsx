@@ -14,7 +14,7 @@ import { LeftSidebar } from './components/LeftSidebar';
 import ReelzeyApp from './components/ReelzeyApp';
 import { SettingsPage } from './components/SettingsPage';
 import { VoicerPage } from './components/VoicerPage';
-import { FuckifyPage } from './components/FuckifyPage';
+import { NudifyPage } from './components/NudifyPage';
 import { PasswordPage } from './components/PasswordPage';
 
 const App: React.FC = () => {
@@ -366,12 +366,12 @@ const App: React.FC = () => {
     );
   }
 
-  // Render Fuckify app
-  if (activeApp === 'fuckify') {
+  // Render Nudify app
+  if (activeApp === 'nudify') {
     return (
       <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
-        <FuckifyPage />
+        <NudifyPage />
       </div>
     );
   }

@@ -349,7 +349,7 @@ export const ImageMode: React.FC<ImageModeProps> = ({ onSelectHistoryImage, onPu
               <div className="flex flex-col md:flex-row gap-4 items-center justify-center border-t border-gray-700/50 pt-6">
                 <a
                   href={generatedImageUrl}
-                  download={`fuckify_edited_${Date.now()}.png`}
+                  download={`nudify_edited_${Date.now()}.png`}
                   className="text-sm font-semibold text-pink-400 hover:text-pink-300 transition-colors flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg border border-pink-500/30 hover:border-pink-500/50"
                 >
                   <i className="fas fa-download"></i> Download Image
