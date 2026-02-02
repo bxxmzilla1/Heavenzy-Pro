@@ -92,14 +92,80 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDownload = () => {
+  const compressImageForDownload = async (dataUrl: string, maxWidth: number = 1920, maxHeight: number = 1920, quality: number = 0.85): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Calculate new dimensions maintaining aspect ratio
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height);
+          width = width * ratio;
+          height = height * ratio;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Determine output format (PNG for transparency, JPEG otherwise)
+        const isPNG = dataUrl.startsWith('data:image/png');
+        const outputType = isPNG ? 'image/png' : 'image/jpeg';
+        const compressionQuality = isPNG ? Math.min(quality, 0.95) : quality;
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Failed to compress image'));
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve(reader.result as string);
+            };
+            reader.onerror = () => reject(new Error('Failed to read compressed image'));
+            reader.readAsDataURL(blob);
+          },
+          outputType,
+          compressionQuality
+        );
+      };
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = dataUrl;
+    });
+  };
+
+  const handleDownload = async () => {
     if (imageUrl) {
-      const link = document.createElement('a');
-      link.href = imageUrl;
-      link.download = `gemma-portrait-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // Compress the image before downloading
+        const compressedDataUrl = await compressImageForDownload(imageUrl, 1920, 1920, 0.85);
+        const link = document.createElement('a');
+        link.href = compressedDataUrl;
+        link.download = `gemma-portrait-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Failed to compress image, downloading original:', error);
+        // Fallback to original if compression fails
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = `gemma-portrait-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     }
   };
 
