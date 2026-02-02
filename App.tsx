@@ -16,6 +16,7 @@ import { SettingsPage } from './components/SettingsPage';
 import { VoicerPage } from './components/VoicerPage';
 import { NudifyPage } from './components/NudifyPage';
 import { GemmaPage } from './components/GemmaPage';
+import { MorphyPage } from './components/MorphyPage';
 import { PasswordPage } from './components/PasswordPage';
 
 const App: React.FC = () => {
@@ -383,6 +384,16 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-orange-500/30">
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
         <GemmaPage />
+      </div>
+    );
+  }
+
+  // Render Morphy app
+  if (activeApp === 'morphy') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-indigo-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <MorphyPage />
       </div>
     );
   }

@@ -1,0 +1,7 @@
+{
+  "name": "Morphy",
+  "description": "Transform your face into any fictional character in a hyper-realistic setting using advanced AI vision and generation.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
