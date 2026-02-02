@@ -118,25 +118,26 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-black text-gray-100 font-sans selection:bg-white selection:text-black">
       <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:pr-64' : 'pr-0'}`}>
         {/* Header */}
-        <header className="border-b border-gray-800 bg-black/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="bg-white text-black p-1.5 rounded-lg">
-                <Camera size={20} strokeWidth={2.5} />
-              </div>
-              <h1 className="text-xl font-bold tracking-tight">GEMMA</h1>
+        <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-orange-500/20 fixed top-0 left-24 right-0 z-40">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <a href="#" onClick={(e) => { e.preventDefault(); }} className="flex items-center">
+                <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 bg-clip-text text-transparent">GEMMA</span>
+              </a>
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 rounded-full hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-lg transition-colors relative flex items-center gap-2 text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800/50"
                 title="Toggle History Sidebar"
               >
-                <History className="w-5 h-5 text-gray-300" />
+                <History className="w-5 h-5" />
+                <span className="text-xs font-medium hidden sm:inline">History</span>
               </button>
             </div>
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        <div className="pt-16">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
             {/* Controls Section */}
@@ -326,9 +327,6 @@ const App: React.FC = () => {
                 >
                   {loading ? 'Generating Synthetic Model...' : 'Generate Portrait'}
                 </Button>
-                <p className="text-xs text-center text-gray-500 mt-3">
-                  Generates a 2K resolution image.
-                </p>
               </div>
             </div>
 
@@ -397,6 +395,7 @@ const App: React.FC = () => {
 
           </div>
         </main>
+        </div>
       </div>
 
       {isSidebarOpen && (
