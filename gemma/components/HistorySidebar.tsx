@@ -11,7 +11,10 @@ interface HistorySidebarProps {
 
 export const HistorySidebar: React.FC<HistorySidebarProps> = ({ history, onSelect, onClear, isOpen }) => {
   return (
-    <aside className={`fixed top-0 right-0 h-full z-20 bg-gray-900 border-l border-gray-800 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} w-64 flex flex-col`}>
+    <aside 
+      className={`fixed top-0 right-0 h-full z-20 bg-gray-900 border-l border-gray-800 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} w-64 flex flex-col`}
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-800 shrink-0">
         <div className="flex items-center gap-2">

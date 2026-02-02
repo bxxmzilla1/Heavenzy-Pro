@@ -15,7 +15,7 @@ import {
 import { generatePortrait } from './services/gemini';
 import { Button } from './components/Button';
 import { HistorySidebar } from './components/HistorySidebar';
-import { Camera, Download, Wand2, User, AlertCircle, Maximize2, Palette, Sparkles, History } from 'lucide-react';
+import { Camera, Download, Wand2, User, AlertCircle, Palette, Sparkles, History } from 'lucide-react';
 
 const HISTORY_STORAGE_KEY = 'gemma-generation-history';
 
@@ -132,11 +132,6 @@ const App: React.FC = () => {
               >
                 <History className="w-5 h-5 text-gray-300" />
               </button>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-sm font-medium text-gray-400 hidden sm:block">
-                Gemini 3 Pro Image Model
-              </div>
             </div>
           </div>
         </header>
@@ -352,13 +347,6 @@ const App: React.FC = () => {
                     {/* Overlay Actions */}
                     <div className="absolute bottom-6 right-6 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 translate-y-2 group-hover:translate-y-0">
                       <button 
-                        onClick={() => window.open(imageUrl, '_blank')}
-                        className="bg-gray-900/90 backdrop-blur text-white p-3 rounded-full shadow-lg hover:bg-black transition-colors"
-                        title="View Full Size"
-                      >
-                        <Maximize2 className="w-5 h-5" />
-                      </button>
-                      <button 
                         onClick={handleDownload}
                         className="bg-white text-black p-3 rounded-full shadow-lg hover:bg-gray-200 transition-colors flex items-center gap-2 px-5"
                       >
@@ -411,6 +399,12 @@ const App: React.FC = () => {
         </main>
       </div>
 
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
       <HistorySidebar 
         history={history}
         onSelect={handleSelectHistoryItem}
