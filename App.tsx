@@ -412,7 +412,7 @@ const App: React.FC = () => {
 
   // Render Halyxis app (default)
   return (
-    <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-teal-500/30">
+    <div className="min-h-screen bg-black text-gray-100 font-sans selection:bg-teal-500/30">
       <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
       <div className="pl-24">
         <Header 
