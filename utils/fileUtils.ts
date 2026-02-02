@@ -3,8 +3,8 @@
  * @param file - The image file to compress
  * @param maxWidth - Maximum width in pixels (default: 1920)
  * @param maxHeight - Maximum height in pixels (default: 1920)
- * @param quality - JPEG quality 0-1 (default: 0.85)
- * @returns Promise resolving to compressed File
+ * @param quality - JPEG/PNG quality 0-1 (default: 0.85 for JPEG, 0.9 for PNG)
+ * @returns Promise resolving to compressed File with preserved format
  */
 const compressImage = (file: File, maxWidth: number = 1920, maxHeight: number = 1920, quality: number = 0.85): Promise<File> => {
   return new Promise((resolve, reject) => {
@@ -35,21 +35,27 @@ const compressImage = (file: File, maxWidth: number = 1920, maxHeight: number = 
 
         ctx.drawImage(img, 0, 0, width, height);
 
+        // Preserve PNG format for PNG files, use JPEG for others
+        const isPNG = file.type === 'image/png';
+        const outputType = isPNG ? 'image/png' : 'image/jpeg';
+        // PNG compression uses a different quality scale (0-1, but typically 0.9 works well)
+        const compressionQuality = isPNG ? Math.min(quality, 0.95) : quality;
+
         canvas.toBlob(
           (blob) => {
             if (!blob) {
               reject(new Error('Failed to compress image'));
               return;
             }
-            // Create a new File with the same name and type
+            // Create a new File preserving the original format
             const compressedFile = new File([blob], file.name, {
-              type: file.type.startsWith('image/') ? 'image/jpeg' : file.type,
+              type: outputType,
               lastModified: Date.now(),
             });
             resolve(compressedFile);
           },
-          'image/jpeg',
-          quality
+          outputType,
+          compressionQuality
         );
       };
       img.onerror = () => reject(new Error('Failed to load image'));
@@ -77,8 +83,8 @@ export const fileToBase64WithMetadata = async (file: File, compress: boolean = t
   if (compress && file.type.startsWith('image/')) {
     try {
       fileToProcess = await compressImage(file);
-      // After compression, images are converted to JPEG
-      mimeType = 'image/jpeg';
+      // Preserve the original format (PNG stays PNG, JPEG stays JPEG, etc.)
+      mimeType = fileToProcess.type;
     } catch (error) {
       console.warn('Image compression failed, using original:', error);
       // Continue with original file if compression fails
@@ -111,7 +117,10 @@ export const blobToBase64WithMetadata = async (blob: Blob, compress: boolean = t
   // If it's an image blob and compression is enabled, convert to File and compress
   if (compress && blob.type.startsWith('image/')) {
     try {
-      const file = new File([blob], 'image.jpg', { type: blob.type });
+      // Preserve the original file extension based on mime type
+      const extension = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg';
+      const fileName = `image.${extension}`;
+      const file = new File([blob], fileName, { type: blob.type });
       return await fileToBase64WithMetadata(file, true);
     } catch (error) {
       console.warn('Blob compression failed, using original:', error);
