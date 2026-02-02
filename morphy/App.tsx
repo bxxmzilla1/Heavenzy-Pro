@@ -90,23 +90,28 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-slate-50 selection:bg-indigo-500/30 font-['Inter']">
-       <header className="py-4 px-6 sticky top-0 z-30 bg-black/50 backdrop-blur-lg border-b border-slate-800/50">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold gradient-text">Morphy</h1>
-          <button
-            onClick={() => setIsHistoryVisible(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800/70 border border-slate-700 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-700/90 transition-colors"
-            aria-label="Open generation history"
-          >
-             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-             </svg>
-            History
-          </button>
+       <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-indigo-500/20 fixed top-0 left-24 right-0 z-40">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center gap-3">
+            <a href="#" onClick={(e) => { e.preventDefault(); }} className="flex items-center">
+              <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-400 bg-clip-text text-transparent">Morphy</span>
+            </a>
+            <button
+              onClick={() => setIsHistoryVisible(true)}
+              className="p-2 rounded-lg transition-colors relative flex items-center gap-2 text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800/50"
+              aria-label="Open generation history"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span className="text-xs font-medium hidden sm:inline">History</span>
+            </button>
+          </div>
         </div>
       </header>
       
-      <main className="max-w-6xl mx-auto px-6 py-12">
+      <div className="pt-16">
+        <main className="max-w-6xl mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           
           {/* Controls Column */}
@@ -200,6 +205,7 @@ const App: React.FC = () => {
           </div>
         </div>
       </main>
+      </div>
       <HistorySidebar
         history={history}
         isVisible={isHistoryVisible}
