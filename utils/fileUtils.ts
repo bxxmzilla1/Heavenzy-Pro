@@ -6,7 +6,7 @@
  * @param quality - JPEG/PNG quality 0-1 (default: 0.85 for JPEG, 0.9 for PNG)
  * @returns Promise resolving to compressed File with preserved format
  */
-const compressImage = (file: File, maxWidth: number = 1920, maxHeight: number = 1920, quality: number = 0.85): Promise<File> => {
+const compressImage = (file: File, maxWidth: number = 4096, maxHeight: number = 4096, quality: number = 0.8): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
