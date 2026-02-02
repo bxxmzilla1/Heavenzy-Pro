@@ -397,7 +397,8 @@ const App: React.FC = () => {
           onToggleHistory={() => setIsHistorySidebarOpen(true)}
         />
         
-        <main className="container mx-auto p-4 md:p-8 max-w-7xl pt-20 mt-0">
+        <div className="pt-20">
+          <main className="container mx-auto p-4 md:p-8 max-w-7xl">
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
                 <div className="w-full lg:w-[380px] flex-shrink-0 flex flex-col gap-8">
                     <div className="bg-[#0f1115] border border-white/5 rounded-xl p-1.5 flex gap-1">
@@ -505,6 +506,7 @@ const App: React.FC = () => {
                 </div>
             </div>
         </main>
+        </div>
       </div>
       
       <HistorySidebar
