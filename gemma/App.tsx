@@ -41,12 +41,6 @@ const App: React.FC = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Load history on mount
-  useEffect(() => {
-    const loadedHistory = loadHistory();
-    setHistory(loadedHistory);
-  }, []);
-
   const [config, setConfig] = useState<GenerationConfig>({
     clothing: CLOTHING_OPTIONS[0],
     lighting: LIGHTING_OPTIONS[0],
@@ -60,9 +54,17 @@ const App: React.FC = () => {
     mouthShape: 'Full Lips'
   });
 
+  // Load history on mount
+  useEffect(() => {
+    const loadedHistory = loadHistory();
+    if (loadedHistory.length > 0) {
+      setHistory(loadedHistory);
+    }
+  }, []);
+
   // Save history to localStorage whenever it changes
   useEffect(() => {
-    if (history.length > 0 || localStorage.getItem(HISTORY_STORAGE_KEY)) {
+    if (history.length > 0) {
       try {
         localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
       } catch (error) {
@@ -105,7 +107,23 @@ const App: React.FC = () => {
         imageUrl: url,
         config: { ...config }
       };
-      setHistory(prevHistory => [newItem, ...prevHistory]);
+      setHistory(prevHistory => {
+        // Load current history from localStorage to ensure we have the latest
+        const currentHistory = loadHistory();
+        // Merge with prevHistory to ensure we don't lose any in-memory updates
+        const mergedHistory = [...prevHistory, ...currentHistory.filter(item => 
+          !prevHistory.some(prev => prev.id === item.id)
+        )];
+        // Add new item to the front
+        const updatedHistory = [newItem, ...mergedHistory];
+        // Immediately save to localStorage
+        try {
+          localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(updatedHistory));
+        } catch (error) {
+          console.error("Failed to save history immediately:", error);
+        }
+        return updatedHistory;
+      });
     } catch (err: any) {
       console.error(err);
       const errorMessage = err.message || err.toString();
