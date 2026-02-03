@@ -14,8 +14,7 @@ import {
 } from './types';
 import { generatePortrait } from './services/gemini';
 import { Button } from './components/Button';
-import { HistorySidebar } from './components/HistorySidebar';
-import { Camera, Download, Wand2, User, AlertCircle, Palette, Sparkles, History } from 'lucide-react';
+import { Camera, Download, Wand2, User, AlertCircle, Palette, Sparkles } from 'lucide-react';
 
 const HISTORY_STORAGE_KEY = 'gemma-generation-history';
 
@@ -39,7 +38,6 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [config, setConfig] = useState<GenerationConfig>({
     clothing: CLOTHING_OPTIONS[0],
@@ -216,25 +214,10 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSelectHistoryItem = (item: HistoryItem) => {
-    setImageUrl(item.imageUrl);
-    setConfig(item.config);
-  };
-  
-  const handleClearHistory = () => {
-    if (window.confirm("Are you sure you want to clear your entire generation history? This action cannot be undone.")) {
-      setHistory([]);
-      try {
-        localStorage.removeItem(HISTORY_STORAGE_KEY);
-      } catch (error) {
-        console.error("Failed to clear history from local storage:", error);
-      }
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black text-gray-100 font-sans selection:bg-white selection:text-black">
-      <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'lg:pr-64' : 'pr-0'}`}>
+      <div>
         {/* Header */}
         <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-orange-500/20 fixed top-0 left-24 right-0 z-40">
           <div className="flex items-center justify-between h-16">
@@ -242,14 +225,6 @@ const App: React.FC = () => {
               <a href="#" onClick={(e) => { e.preventDefault(); }} className="flex items-center">
                 <span className="self-center text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-orange-400 via-orange-500 to-orange-400 bg-clip-text text-transparent">GEMMA</span>
               </a>
-              <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2 rounded-lg transition-colors relative flex items-center gap-2 text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800/50"
-                title="Toggle History Sidebar"
-              >
-                <History className="w-5 h-5" />
-                <span className="text-xs font-medium hidden sm:inline">History</span>
-              </button>
             </div>
           </div>
         </header>
@@ -516,18 +491,6 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-      <HistorySidebar 
-        history={history}
-        onSelect={handleSelectHistoryItem}
-        onClear={handleClearHistory}
-        isOpen={isSidebarOpen}
-      />
     </div>
   );
 };
