@@ -22,7 +22,11 @@ const HISTORY_STORAGE_KEY = 'gemma-generation-history';
 const loadHistory = (): HistoryItem[] => {
   try {
     const storedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
-    return storedHistory ? JSON.parse(storedHistory) : [];
+    if (storedHistory) {
+      const parsed = JSON.parse(storedHistory);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+    return [];
   } catch (error) {
     console.error("Failed to load history from local storage:", error);
     return [];
@@ -34,8 +38,14 @@ const App: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   
-  const [history, setHistory] = useState<HistoryItem[]>(loadHistory);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Load history on mount
+  useEffect(() => {
+    const loadedHistory = loadHistory();
+    setHistory(loadedHistory);
+  }, []);
 
   const [config, setConfig] = useState<GenerationConfig>({
     clothing: CLOTHING_OPTIONS[0],
@@ -50,12 +60,31 @@ const App: React.FC = () => {
     mouthShape: 'Full Lips'
   });
 
+  // Save history to localStorage whenever it changes
   useEffect(() => {
-    try {
-      localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
-    } catch (error) {
-      console.error("Failed to save history to local storage:", error);
+    if (history.length > 0 || localStorage.getItem(HISTORY_STORAGE_KEY)) {
+      try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      } catch (error) {
+        console.error("Failed to save history to local storage:", error);
+      }
     }
+  }, [history]);
+
+  // Save history before page unload
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      } catch (error) {
+        console.error("Failed to save history on unload:", error);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, [history]);
 
   const handleGenerate = async () => {
@@ -177,6 +206,11 @@ const App: React.FC = () => {
   const handleClearHistory = () => {
     if (window.confirm("Are you sure you want to clear your entire generation history? This action cannot be undone.")) {
       setHistory([]);
+      try {
+        localStorage.removeItem(HISTORY_STORAGE_KEY);
+      } catch (error) {
+        console.error("Failed to clear history from local storage:", error);
+      }
     }
   };
 
