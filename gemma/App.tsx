@@ -14,7 +14,7 @@ import {
 } from './types';
 import { generatePortrait } from './services/gemini';
 import { Button } from './components/Button';
-import { Camera, Download, Wand2, User, AlertCircle, Palette, Sparkles } from 'lucide-react';
+import { Camera, Download, Wand2, User, AlertCircle, Palette, Sparkles, Shuffle } from 'lucide-react';
 
 const HISTORY_STORAGE_KEY = 'gemma-generation-history';
 
@@ -214,6 +214,23 @@ const App: React.FC = () => {
     }
   };
 
+  const handleRandomize = () => {
+    // Randomize Identity & Skin and Features sections only
+    setConfig({
+      ...config,
+      // Identity & Skin
+      ethnicity: ETHNICITY_OPTIONS[Math.floor(Math.random() * ETHNICITY_OPTIONS.length)],
+      skinTone: Math.floor(Math.random() * 101), // 0-100
+      // Features
+      hairStyle: HAIR_STYLE_OPTIONS[Math.floor(Math.random() * HAIR_STYLE_OPTIONS.length)],
+      hairColor: HAIR_COLOR_OPTIONS[Math.floor(Math.random() * HAIR_COLOR_OPTIONS.length)],
+      eyeColor: EYE_COLOR_OPTIONS[Math.floor(Math.random() * EYE_COLOR_OPTIONS.length)],
+      eyeShape: EYE_SHAPE_OPTIONS[Math.floor(Math.random() * EYE_SHAPE_OPTIONS.length)],
+      noseShape: NOSE_SHAPE_OPTIONS[Math.floor(Math.random() * NOSE_SHAPE_OPTIONS.length)],
+      mouthShape: MOUTH_SHAPE_OPTIONS[Math.floor(Math.random() * MOUTH_SHAPE_OPTIONS.length)],
+    });
+  };
+
 
   return (
     <div className="min-h-screen bg-black text-gray-100 font-sans selection:bg-white selection:text-black">
@@ -235,6 +252,15 @@ const App: React.FC = () => {
             
             {/* Controls Section */}
             <div className="lg:col-span-5 space-y-8 h-fit">
+              
+              {/* Randomize Button */}
+              <button
+                onClick={handleRandomize}
+                className="w-full py-3 px-4 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-900/30 hover:shadow-xl hover:shadow-orange-900/40 flex items-center justify-center gap-2"
+              >
+                <Shuffle className="w-4 h-4" />
+                Randomize Identity & Features
+              </button>
               
               {/* Identity Group */}
               <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
