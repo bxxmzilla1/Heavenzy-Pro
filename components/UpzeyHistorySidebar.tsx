@@ -25,6 +25,7 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [previewPrediction, setPreviewPrediction] = useState<Prediction | null>(null);
 
   const fetchHistory = useCallback(async () => {
     const WAVESPEED_API_KEY = localStorage.getItem('wavespeedApiKey');
@@ -123,8 +124,12 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
 
   const handleSelect = (prediction: Prediction) => {
     if (prediction.outputs && prediction.outputs.length > 0 && prediction.status === 'completed') {
-      onSelectImage(prediction.outputs[0]);
+      setPreviewPrediction(prediction);
     }
+  };
+
+  const handleBack = () => {
+    setPreviewPrediction(null);
   };
 
   const handleToggleSelect = (e: React.MouseEvent, id: string) => {
@@ -204,86 +209,149 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
           </div>
 
           <div className="flex-1 overflow-y-auto p-4">
-            {isLoading && allPredictions.length === 0 ? (
-              <div className="flex items-center justify-center h-64">
-                <svg className="animate-spin h-8 w-8 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
-            ) : error ? (
-              <div className="p-4 bg-red-900/30 border border-red-500/30 rounded-lg">
-                <p className="text-red-400 text-sm">{error}</p>
-              </div>
-            ) : groupedPredictions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-                <i className={`fas ${activeTab === 'image' ? 'fa-image' : 'fa-video'} text-4xl mb-4`}></i>
-                <p className="text-sm">No {activeTab} generation history found</p>
+            {previewPrediction ? (
+              // Preview View
+              <div className="flex flex-col h-full">
+                <button
+                  onClick={handleBack}
+                  className="mb-4 flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors text-sm font-medium"
+                >
+                  <i className="fas fa-arrow-left"></i>
+                  Back
+                </button>
+                <div className="flex-1 flex flex-col items-center justify-center bg-gray-800/30 rounded-xl p-6 border border-gray-700">
+                  {previewPrediction.outputs && previewPrediction.outputs.length > 0 ? (
+                    <>
+                      {activeTab === 'image' ? (
+                        <img
+                          src={previewPrediction.outputs[0]}
+                          alt="Upscaled result"
+                          className="max-w-full max-h-[calc(100vh-12rem)] object-contain rounded-lg"
+                        />
+                      ) : (
+                        <video
+                          src={previewPrediction.outputs[0]}
+                          controls
+                          className="max-w-full max-h-[calc(100vh-12rem)] rounded-lg"
+                        />
+                      )}
+                      <div className="mt-4 w-full space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-400">Status:</span>
+                          <StatusIndicator status={previewPrediction.status} />
+                        </div>
+                        {previewPrediction.input?.target_resolution && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-400">Resolution:</span>
+                            <span className="text-gray-300 uppercase">{previewPrediction.input.target_resolution}</span>
+                          </div>
+                        )}
+                        {previewPrediction.input?.output_format && (
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-400">Format:</span>
+                            <span className="text-gray-300 uppercase">{previewPrediction.input.output_format}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-400">Created:</span>
+                          <span className="text-gray-300">
+                            {new Date(previewPrediction.created_at).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center text-gray-500">
+                      <p className="text-sm">No preview available</p>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
-              <div className="space-y-6">
-                {groupedPredictions.map(({ date, predictions: datePredictions }) => (
-                  <div key={date}>
-                    <h3 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">{date}</h3>
-                    <div className="space-y-3">
-                      {datePredictions.map((prediction) => (
-                        <div
-                          key={prediction.id}
-                          onClick={() => handleSelect(prediction)}
-                          className={`relative bg-gray-800/50 rounded-lg overflow-hidden border cursor-pointer transition-all hover:border-cyan-500/50 ${
-                            prediction.status === 'completed' ? 'border-gray-700' : 'border-gray-800'
-                          }`}
-                        >
-                          {prediction.outputs && prediction.outputs.length > 0 && prediction.status === 'completed' ? (
-                            <div className="relative">
-                              {activeTab === 'image' ? (
-                                <img
-                                  src={prediction.outputs[0]}
-                                  alt="Upscaled result"
-                                  className="w-full h-auto object-contain max-h-48 bg-gray-900"
-                                />
+              // List View
+              <>
+                {isLoading && allPredictions.length === 0 ? (
+                  <div className="flex items-center justify-center h-64">
+                    <svg className="animate-spin h-8 w-8 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                ) : error ? (
+                  <div className="p-4 bg-red-900/30 border border-red-500/30 rounded-lg">
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </div>
+                ) : groupedPredictions.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+                    <i className={`fas ${activeTab === 'image' ? 'fa-image' : 'fa-video'} text-4xl mb-4`}></i>
+                    <p className="text-sm">No {activeTab} generation history found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {groupedPredictions.map(({ date, predictions: datePredictions }) => (
+                      <div key={date}>
+                        <h3 className="text-sm font-semibold text-gray-400 mb-3 uppercase tracking-wider">{date}</h3>
+                        <div className="space-y-3">
+                          {datePredictions.map((prediction) => (
+                            <div
+                              key={prediction.id}
+                              onClick={() => handleSelect(prediction)}
+                              className={`relative bg-gray-800/50 rounded-lg overflow-hidden border cursor-pointer transition-all hover:border-cyan-500/50 ${
+                                prediction.status === 'completed' ? 'border-gray-700' : 'border-gray-800'
+                              }`}
+                            >
+                              {prediction.outputs && prediction.outputs.length > 0 && prediction.status === 'completed' ? (
+                                <div className="relative">
+                                  {activeTab === 'image' ? (
+                                    <img
+                                      src={prediction.outputs[0]}
+                                      alt="Upscaled result"
+                                      className="w-full h-auto object-contain max-h-48 bg-gray-900"
+                                    />
+                                  ) : (
+                                    <video
+                                      src={prediction.outputs[0]}
+                                      className="w-full h-auto object-contain max-h-48 bg-gray-900"
+                                      controls
+                                      muted
+                                    />
+                                  )}
+                                  <div className="absolute top-2 right-2">
+                                    <StatusIndicator status={prediction.status} />
+                                  </div>
+                                  {prediction.input?.target_resolution && (
+                                    <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white uppercase">
+                                      {prediction.input.target_resolution}
+                                    </div>
+                                  )}
+                                </div>
                               ) : (
-                                <video
-                                  src={prediction.outputs[0]}
-                                  className="w-full h-auto object-contain max-h-48 bg-gray-900"
-                                  controls
-                                  muted
-                                />
-                              )}
-                              <div className="absolute top-2 right-2">
-                                <StatusIndicator status={prediction.status} />
-                              </div>
-                              {prediction.input?.target_resolution && (
-                                <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white uppercase">
-                                  {prediction.input.target_resolution}
+                                <div className="p-8 flex flex-col items-center justify-center bg-gray-900/50">
+                                  <StatusIndicator status={prediction.status} />
+                                  {prediction.status === 'processing' && (
+                                    <svg className="animate-spin h-6 w-6 text-cyan-400 mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                  )}
                                 </div>
                               )}
+                              <div className="p-3">
+                                <div className="flex items-center justify-between text-xs text-gray-400">
+                                  <span>{new Date(prediction.created_at).toLocaleTimeString()}</span>
+                                  {prediction.input?.output_format && (
+                                    <span className="uppercase">{prediction.input.output_format}</span>
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                          ) : (
-                            <div className="p-8 flex flex-col items-center justify-center bg-gray-900/50">
-                              <StatusIndicator status={prediction.status} />
-                              {prediction.status === 'processing' && (
-                                <svg className="animate-spin h-6 w-6 text-cyan-400 mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                              )}
-                            </div>
-                          )}
-                          <div className="p-3">
-                            <div className="flex items-center justify-between text-xs text-gray-400">
-                              <span>{new Date(prediction.created_at).toLocaleTimeString()}</span>
-                              {prediction.input?.output_format && (
-                                <span className="uppercase">{prediction.input.output_format}</span>
-                              )}
-                            </div>
-                          </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </div>
         </div>
