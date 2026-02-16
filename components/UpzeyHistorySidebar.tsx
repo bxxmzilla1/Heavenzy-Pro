@@ -8,6 +8,7 @@ interface Prediction {
   created_at: string;
   input?: {
     image?: string;
+    video?: string;
     target_resolution?: string;
     output_format?: string;
   };
@@ -19,7 +20,8 @@ interface UpzeyHistorySidebarProps {
 }
 
 export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSelectImage, onClose }) => {
-  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [allPredictions, setAllPredictions] = useState<Prediction[]>([]);
+  const [activeTab, setActiveTab] = useState<'image' | 'video'>('image');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -47,11 +49,11 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
         throw new Error(errorData.message || `Failed to fetch history with status ${response.status}`);
       }
       const result = await response.json();
-      // Filter for image upscaler predictions
-      const imagePredictions = result.data.items.filter((p: Prediction) =>
-        p.model && p.model.includes('ultimate-image-upscaler')
+      // Get all upscaler predictions (both image and video)
+      const upscalerPredictions = result.data.items.filter((p: Prediction) =>
+        p.model && (p.model.includes('ultimate-image-upscaler') || p.model.includes('ultimate-video-upscaler'))
       );
-      setPredictions(imagePredictions);
+      setAllPredictions(upscalerPredictions);
     } catch (err: any) {
       setError(err.message || "An unknown error occurred while fetching history.");
     } finally {
@@ -140,6 +142,15 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
 
   const selectedCount = selectedIds.size;
 
+  // Filter predictions based on active tab
+  const predictions = allPredictions.filter((p: Prediction) => {
+    if (activeTab === 'image') {
+      return p.model && p.model.includes('ultimate-image-upscaler');
+    } else {
+      return p.model && p.model.includes('ultimate-video-upscaler');
+    }
+  });
+
   const groupedPredictions = groupPredictionsByDate(predictions);
 
   return (
@@ -166,8 +177,34 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
             </div>
           </div>
 
+          {/* Tabs */}
+          <div className="flex border-b border-gray-800">
+            <button
+              onClick={() => setActiveTab('image')}
+              className={`flex-1 px-4 py-3 text-sm font-semibold transition-colors ${
+                activeTab === 'image'
+                  ? 'text-cyan-400 border-b-2 border-cyan-400 bg-cyan-400/10'
+                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/50'
+              }`}
+            >
+              <i className="fas fa-image mr-2"></i>
+              Image
+            </button>
+            <button
+              onClick={() => setActiveTab('video')}
+              className={`flex-1 px-4 py-3 text-sm font-semibold transition-colors ${
+                activeTab === 'video'
+                  ? 'text-cyan-400 border-b-2 border-cyan-400 bg-cyan-400/10'
+                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/50'
+              }`}
+            >
+              <i className="fas fa-video mr-2"></i>
+              Video
+            </button>
+          </div>
+
           <div className="flex-1 overflow-y-auto p-4">
-            {isLoading && predictions.length === 0 ? (
+            {isLoading && allPredictions.length === 0 ? (
               <div className="flex items-center justify-center h-64">
                 <svg className="animate-spin h-8 w-8 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -180,8 +217,8 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
               </div>
             ) : groupedPredictions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-                <i className="fas fa-image text-4xl mb-4"></i>
-                <p className="text-sm">No generation history found</p>
+                <i className={`fas ${activeTab === 'image' ? 'fa-image' : 'fa-video'} text-4xl mb-4`}></i>
+                <p className="text-sm">No {activeTab} generation history found</p>
               </div>
             ) : (
               <div className="space-y-6">
@@ -199,11 +236,20 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
                         >
                           {prediction.outputs && prediction.outputs.length > 0 && prediction.status === 'completed' ? (
                             <div className="relative">
-                              <img
-                                src={prediction.outputs[0]}
-                                alt="Upscaled result"
-                                className="w-full h-auto object-contain max-h-48 bg-gray-900"
-                              />
+                              {activeTab === 'image' ? (
+                                <img
+                                  src={prediction.outputs[0]}
+                                  alt="Upscaled result"
+                                  className="w-full h-auto object-contain max-h-48 bg-gray-900"
+                                />
+                              ) : (
+                                <video
+                                  src={prediction.outputs[0]}
+                                  className="w-full h-auto object-contain max-h-48 bg-gray-900"
+                                  controls
+                                  muted
+                                />
+                              )}
                               <div className="absolute top-2 right-2">
                                 <StatusIndicator status={prediction.status} />
                               </div>
