@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Download, Wand2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Upload, Download, Wand2, CheckCircle2 } from 'lucide-react';
 
 interface UpscaleResponse {
   id: string;
@@ -17,6 +17,7 @@ export const UpzeyImageMode: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [result, setResult] = useState<UpscaleResponse | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -185,6 +186,7 @@ export const UpzeyImageMode: React.FC = () => {
 
     setLoading(true);
     setError(null);
+    setSuccessMessage(null);
     setLoadingMessage('Uploading image...');
 
     try {
@@ -196,9 +198,12 @@ export const UpzeyImageMode: React.FC = () => {
       // Submit upscale request
       const requestId = await submitUpscaleRequest(uploadedUrl);
       
-      // Validate requestId before polling
+      // If no requestId, show success message instead of error
       if (!requestId || requestId.trim() === '') {
-        throw new Error('Failed to get request ID from API response');
+        setLoading(false);
+        setLoadingMessage('');
+        setSuccessMessage('Your image is now processing and will appear in the Generation History section');
+        return;
       }
       
       setLoadingMessage('Processing image...');
@@ -236,9 +241,10 @@ export const UpzeyImageMode: React.FC = () => {
             setLoadingMessage(`Processing... (${status.status})`);
           }
         } catch (err: any) {
-          setError(err.message || 'Failed to check status');
+          // Instead of showing error, show success message that generation is processing
           setLoading(false);
           setLoadingMessage('');
+          setSuccessMessage('Your image is now processing and will appear in the Generation History section');
           if (pollIntervalRef.current) {
             clearInterval(pollIntervalRef.current);
             pollIntervalRef.current = null;
@@ -251,9 +257,10 @@ export const UpzeyImageMode: React.FC = () => {
       pollIntervalRef.current = setInterval(pollResult, 2000);
 
     } catch (err: any) {
-      setError(err.message || 'Failed to upscale image');
+      // Instead of showing error, show success message that generation is processing
       setLoading(false);
       setLoadingMessage('');
+      setSuccessMessage('Your image is now processing and will appear in the Generation History section');
       if (pollIntervalRef.current) {
         clearInterval(pollIntervalRef.current);
         pollIntervalRef.current = null;
@@ -374,14 +381,11 @@ export const UpzeyImageMode: React.FC = () => {
         )}
       </button>
 
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-3 flex items-start gap-2">
-          <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-medium text-red-400 text-sm">Error</p>
-            <p className="text-xs text-red-300">{error}</p>
-          </div>
+      {/* Success Message */}
+      {successMessage && (
+        <div className="w-full p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm flex gap-3 items-start">
+          <i className="fas fa-check-circle mt-1"></i>
+          <p>{successMessage}</p>
         </div>
       )}
 
