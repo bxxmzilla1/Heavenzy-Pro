@@ -253,22 +253,22 @@ export const UpzeyImageMode: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 max-w-3xl mx-auto">
       {/* Upload Section */}
-      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4 flex items-center gap-2">
-          <Upload className="w-4 h-4" /> Upload Image
+      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-2">
+          <Upload className="w-3 h-3" /> Upload Image
         </h2>
         
         <div
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
           onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-cyan-500 transition-colors bg-gray-900/30"
+          className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center cursor-pointer hover:border-cyan-500 transition-colors bg-gray-900/30"
         >
           {imagePreview ? (
             <div className="relative">
-              <img src={imagePreview} alt="Preview" className="max-h-64 mx-auto rounded-lg" />
+              <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -277,15 +277,15 @@ export const UpzeyImageMode: React.FC = () => {
                   setImageUrl(null);
                   setResult(null);
                 }}
-                className="mt-4 text-sm text-cyan-400 hover:text-cyan-300"
+                className="mt-3 text-xs text-cyan-400 hover:text-cyan-300"
               >
                 Remove Image
               </button>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-3">
-              <Upload className="w-12 h-12 text-gray-500" />
-              <p className="text-gray-400">Click or drag to upload image</p>
+            <div className="flex flex-col items-center gap-2">
+              <Upload className="w-8 h-8 text-gray-500" />
+              <p className="text-sm text-gray-400">Click or drag to upload image</p>
               <p className="text-xs text-gray-500">PNG, JPG, or WEBP</p>
             </div>
           )}
@@ -300,16 +300,16 @@ export const UpzeyImageMode: React.FC = () => {
       </div>
 
       {/* Settings Section */}
-      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Settings</h2>
+      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Settings</h2>
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-2">Target Resolution</label>
+            <label className="block text-xs font-medium text-gray-300 mb-1.5">Target Resolution</label>
             <select
               value={targetResolution}
               onChange={(e) => setTargetResolution(e.target.value as '2k' | '4k' | '8k')}
-              className="w-full text-sm border-gray-600 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 bg-gray-700 py-2 px-3 text-white"
+              className="w-full text-sm border-gray-600 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 bg-gray-700 py-1.5 px-3 text-white"
             >
               <option value="2k">2K</option>
               <option value="4k">4K</option>
@@ -318,11 +318,11 @@ export const UpzeyImageMode: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-300 mb-2">Output Format</label>
+            <label className="block text-xs font-medium text-gray-300 mb-1.5">Output Format</label>
             <select
               value={outputFormat}
               onChange={(e) => setOutputFormat(e.target.value as 'jpeg' | 'png' | 'webp')}
-              className="w-full text-sm border-gray-600 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 bg-gray-700 py-2 px-3 text-white"
+              className="w-full text-sm border-gray-600 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 bg-gray-700 py-1.5 px-3 text-white"
             >
               <option value="jpeg">JPEG</option>
               <option value="png">PNG</option>
@@ -336,11 +336,11 @@ export const UpzeyImageMode: React.FC = () => {
       <button
         onClick={handleUpscale}
         disabled={loading || !imageFile}
-        className="w-full py-4 px-6 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-semibold rounded-xl transition-all shadow-lg shadow-cyan-900/30 hover:shadow-xl hover:shadow-cyan-900/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-3 px-4 bg-gradient-to-r from-cyan-600 to-cyan-500 hover:from-cyan-500 hover:to-cyan-400 text-white font-semibold rounded-lg transition-all shadow-lg shadow-cyan-900/30 hover:shadow-xl hover:shadow-cyan-900/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
       >
         {loading ? (
           <>
-            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -348,7 +348,7 @@ export const UpzeyImageMode: React.FC = () => {
           </>
         ) : (
           <>
-            <Wand2 className="w-5 h-5" />
+            <Wand2 className="w-4 h-4" />
             Upscale Image
           </>
         )}
@@ -356,24 +356,24 @@ export const UpzeyImageMode: React.FC = () => {
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-900/30 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+        <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-3 flex items-start gap-2">
+          <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
           <div>
-            <p className="font-medium text-red-400">Error</p>
-            <p className="text-sm text-red-300">{error}</p>
+            <p className="font-medium text-red-400 text-sm">Error</p>
+            <p className="text-xs text-red-300">{error}</p>
           </div>
         </div>
       )}
 
       {/* Result Display */}
       {result && result.status === 'completed' && result.outputs && result.outputs.length > 0 && (
-        <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle2 className="w-5 h-5 text-green-400" />
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-400">Upscaled Result</h2>
+        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+          <div className="flex items-center gap-2 mb-3">
+            <CheckCircle2 className="w-4 h-4 text-green-400" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Upscaled Result</h2>
           </div>
           
-          <div className="mb-4">
+          <div className="mb-3">
             <img
               src={result.outputs[0]}
               alt="Upscaled"
@@ -383,9 +383,9 @@ export const UpzeyImageMode: React.FC = () => {
 
           <button
             onClick={handleDownload}
-            className="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full py-2 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
           >
-            <Download className="w-5 h-5" />
+            <Download className="w-4 h-4" />
             Download Upscaled Image
           </button>
         </div>
