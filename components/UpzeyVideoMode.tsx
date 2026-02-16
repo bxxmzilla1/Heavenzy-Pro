@@ -84,7 +84,18 @@ export const UpzeyVideoMode: React.FC = () => {
     }
 
     const data = await response.json();
-    return data.id;
+    
+    // Handle different response formats
+    if (data.id) {
+      return data.id;
+    } else if (data.data && data.data.id) {
+      return data.data.id;
+    } else if (data.result && data.result.id) {
+      return data.result.id;
+    } else {
+      console.error('Unexpected API response format:', data);
+      throw new Error('Invalid response format: missing request ID');
+    }
   };
 
   // Poll for result
@@ -180,11 +191,20 @@ export const UpzeyVideoMode: React.FC = () => {
 
       // Submit upscale request
       const requestId = await submitUpscaleRequest(uploadedUrl);
+      
+      // Validate requestId before polling
+      if (!requestId || requestId.trim() === '') {
+        throw new Error('Failed to get request ID from API response');
+      }
+      
       setLoadingMessage('Processing video...');
 
       // Poll for result
       const pollResult = async () => {
         try {
+          if (!requestId) {
+            throw new Error('Request ID is missing');
+          }
           const status = await pollForResult(requestId);
 
           if (status.status === 'completed') {
