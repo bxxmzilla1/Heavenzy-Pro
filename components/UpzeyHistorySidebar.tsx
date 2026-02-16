@@ -145,6 +145,61 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
     });
   };
 
+  const handleDownloadSelected = async () => {
+    const selectedPredictions = predictions.filter(p =>
+      selectedIds.has(p.id) &&
+      p.status === 'completed' &&
+      p.outputs &&
+      p.outputs.length > 0
+    );
+
+    if (selectedPredictions.length === 0) {
+      return;
+    }
+
+    // Download each item
+    for (let i = 0; i < selectedPredictions.length; i++) {
+      const pred = selectedPredictions[i];
+      const mediaUrl = pred.outputs[0];
+      const date = new Date(pred.created_at);
+      const dateStr = date.toISOString().split('T')[0];
+      const timeStr = date.toTimeString().split(' ')[0].replace(/:/g, '-');
+      
+      // Determine file extension based on active tab and output format
+      let extension = activeTab === 'image' ? 'png' : 'mp4';
+      if (pred.input?.output_format) {
+        extension = pred.input.output_format;
+      } else if (activeTab === 'image') {
+        extension = 'png';
+      }
+      
+      const filename = `upzey_${activeTab}_${dateStr}_${timeStr}_${pred.id.slice(0, 8)}.${extension}`;
+
+      try {
+        const response = await fetch(mediaUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        // Small delay between downloads to prevent browser blocking
+        if (i < selectedPredictions.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 300));
+        }
+      } catch (err) {
+        console.error(`Failed to download ${activeTab} ${pred.id}:`, err);
+      }
+    }
+
+    // Clear selection after download
+    setSelectedIds(new Set());
+  };
+
   const selectedCount = selectedIds.size;
 
   // Filter predictions based on active tab
@@ -207,6 +262,19 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
               Video
             </button>
           </div>
+
+          {/* Download Button - Shows when items are selected */}
+          {selectedCount > 0 && (
+            <div className="px-4 py-3 border-b border-gray-800 bg-cyan-500/10">
+              <button
+                onClick={handleDownloadSelected}
+                className="w-full py-2 px-4 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <i className="fas fa-download"></i>
+                Download {selectedCount} {selectedCount === 1 ? (activeTab === 'image' ? 'Image' : 'Video') : (activeTab === 'image' ? 'Images' : 'Videos')}
+              </button>
+            </div>
+          )}
 
           <div className="flex-1 overflow-y-auto p-4">
             {previewPrediction ? (
@@ -295,11 +363,30 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
                           {datePredictions.map((prediction) => (
                             <div
                               key={prediction.id}
-                              onClick={() => handleSelect(prediction)}
-                              className={`relative bg-gray-800/50 rounded-lg overflow-hidden border cursor-pointer transition-all hover:border-cyan-500/50 ${
-                                prediction.status === 'completed' ? 'border-gray-700' : 'border-gray-800'
+                              onClick={() => prediction.status === 'completed' && prediction.outputs && prediction.outputs.length > 0 && handleSelect(prediction)}
+                              className={`relative bg-gray-800/50 rounded-lg overflow-hidden border transition-all ${
+                                prediction.status === 'completed' && prediction.outputs && prediction.outputs.length > 0
+                                  ? `cursor-pointer hover:border-cyan-500/50 ${selectedIds.has(prediction.id) ? 'border-cyan-500 bg-cyan-500/10' : 'border-gray-700'}`
+                                  : 'border-gray-800 cursor-default'
                               }`}
                             >
+                              {/* Checkbox for selection */}
+                              {prediction.status === 'completed' && prediction.outputs && prediction.outputs.length > 0 && (
+                                <div
+                                  className="absolute top-2 left-2 z-10"
+                                  onClick={(e) => handleToggleSelect(e, prediction.id)}
+                                >
+                                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                                    selectedIds.has(prediction.id)
+                                      ? 'bg-cyan-600 border-cyan-600'
+                                      : 'bg-gray-800/80 border-gray-600 hover:border-cyan-500'
+                                  }`}>
+                                    {selectedIds.has(prediction.id) && (
+                                      <i className="fas fa-check text-white text-xs"></i>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                               {prediction.outputs && prediction.outputs.length > 0 && prediction.status === 'completed' ? (
                                 <div className="relative">
                                   {activeTab === 'image' ? (
@@ -320,7 +407,7 @@ export const UpzeyHistorySidebar: React.FC<UpzeyHistorySidebarProps> = ({ onSele
                                     <StatusIndicator status={prediction.status} />
                                   </div>
                                   {prediction.input?.target_resolution && (
-                                    <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white uppercase">
+                                    <div className="absolute top-2 left-10 bg-black/70 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white uppercase">
                                       {prediction.input.target_resolution}
                                     </div>
                                   )}
