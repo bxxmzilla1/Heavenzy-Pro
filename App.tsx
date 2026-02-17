@@ -18,6 +18,7 @@ import { NudifyPage } from './components/NudifyPage';
 import { GemmaPage } from './components/GemmaPage';
 import { MorphyPage } from './components/MorphyPage';
 import { UpzeyPage } from './components/UpzeyPage';
+import { NovaPage } from './components/NovaPage';
 import { PasswordPage } from './components/PasswordPage';
 
 const App: React.FC = () => {
@@ -405,6 +406,15 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-cyan-500/30">
         <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
         <UpzeyPage />
+      </div>
+    );
+  }
+
+  if (activeApp === 'nova') {
+    return (
+      <div className="min-h-screen bg-[#020408] text-gray-100 font-sans selection:bg-violet-500/30">
+        <LeftSidebar activeApp={activeApp} onAppChange={setActiveApp} />
+        <NovaPage />
       </div>
     );
   }
