@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Upload, Download, Wand2, CheckCircle2, X } from 'lucide-react';
+import { NovaHistorySidebar } from './NovaHistorySidebar';
 
 interface EditResponse {
   id: string;
@@ -20,8 +21,76 @@ export const NovaPage: React.FC = () => {
   const [loadingMessage, setLoadingMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [result, setResult] = useState<EditResponse | null>(null);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [balance, setBalance] = useState<number | null>(null);
+  const [isBalanceLoading, setIsBalanceLoading] = useState(false);
+  const [balanceError, setBalanceError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchBalance = useCallback(async (showLoading = true) => {
+    const wavespeedApiKey = localStorage.getItem('wavespeedApiKey');
+    if (!wavespeedApiKey) {
+      setBalance(null);
+      setBalanceError(null);
+      return;
+    }
+
+    if (showLoading) {
+      setIsBalanceLoading(true);
+    }
+    setBalanceError(null);
+    try {
+      const response = await fetch('https://api.wavespeed.ai/api/v3/balance', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${wavespeedApiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+        throw new Error(errorData.message || errorData.msg || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Check if the response has the expected structure (Wavespeed API format)
+      if (data.code === 200 && data.data && typeof data.data.balance === 'number') {
+        setBalance(data.data.balance);
+      } else if (typeof data.balance === 'number') {
+        // Fallback for different response format
+        setBalance(data.balance);
+      } else if (data.code && data.code !== 200) {
+        // API returned an error code
+        throw new Error(data.message || data.msg || `API error: code ${data.code}`);
+      } else {
+        // Unexpected response structure
+        console.error('Unexpected balance API response:', data);
+        throw new Error(data.message || data.msg || "Invalid balance data received from API.");
+      }
+
+    } catch (err: any) {
+      console.error('Error fetching balance:', err);
+      setBalance(null);
+      setBalanceError(err.message || "Failed to fetch balance.");
+    } finally {
+      if (showLoading) {
+        setIsBalanceLoading(false);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBalance(true); // Initial load with loading indicator
+    // Refresh balance every second silently (without loading indicator)
+    const interval = setInterval(() => {
+      fetchBalance(false);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [fetchBalance]);
 
   // Cleanup polling on unmount
   useEffect(() => {
@@ -320,6 +389,11 @@ export const NovaPage: React.FC = () => {
     }
   };
 
+  const handleSelectHistoryImage = (url: string) => {
+    // Could be used to load the image into the editor
+    setIsHistoryVisible(false);
+  };
+
   return (
     <div className="min-h-screen bg-black text-gray-100">
       {/* Header */}
@@ -329,9 +403,36 @@ export const NovaPage: React.FC = () => {
             <h1 className="text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-violet-400 via-violet-500 to-violet-400 bg-clip-text text-transparent">
               NOVA
             </h1>
+            <div className="p-2 rounded-full text-gray-400 bg-gray-800/50 flex items-center text-sm h-9 px-3">
+              <i className="fas fa-wallet mr-2 text-violet-400"></i>
+              {isBalanceLoading ? (
+                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+              ) : balanceError ? (
+                <span className="text-red-400" title={balanceError}>Error</span>
+              ) : balance !== null ? (
+                <span className="font-semibold text-white">${balance.toFixed(2)}</span>
+              ) : (
+                <span className="text-gray-500">N/A</span>
+              )}
+            </div>
+            <button
+              onClick={() => setIsHistoryVisible(true)}
+              className="p-2 rounded-lg transition-colors relative flex items-center gap-2 text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800/50"
+              title="Generation History"
+            >
+              <i className="fas fa-history text-base"></i>
+              <span className="text-xs font-medium hidden sm:inline">History</span>
+            </button>
           </div>
         </div>
       </header>
+
+      {isHistoryVisible && (
+        <NovaHistorySidebar
+          onSelectImage={handleSelectHistoryImage}
+          onClose={() => setIsHistoryVisible(false)}
+        />
+      )}
 
       {/* Body Section */}
       <div className="pt-20">
