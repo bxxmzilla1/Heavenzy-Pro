@@ -5,7 +5,8 @@ interface PasswordPageProps {
 }
 
 const VALID_PASSWORDS = [
-  'heavenzy1997@gmail.com'
+  'heavenzy1997@gmail.com',
+  'karlcazanetwork@gmail.com'
 ];
 
 export const PasswordPage: React.FC<PasswordPageProps> = ({ onPasswordVerified }) => {
