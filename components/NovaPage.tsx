@@ -14,9 +14,13 @@ export const NovaPage: React.FC = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [prompt, setPrompt] = useState<string>('');
-  const [aspectRatio, setAspectRatio] = useState<'1:1' | '3:2' | '2:3' | '3:4' | '4:3' | '4:5' | '5:4' | '9:16' | '16:9' | '21:9'>('16:9');
-  const [resolution, setResolution] = useState<'1k' | '2k' | '4k'>('1k');
+  const [aspectRatio, setAspectRatio] = useState<
+    '1:1' | '3:2' | '2:3' | '3:4' | '4:3' | '4:5' | '5:4' | '9:16' | '16:9' | '21:9' | '1:4' | '4:1' | '1:8' | '8:1'
+  >('16:9');
+  const [resolution, setResolution] = useState<'0.5k' | '1k' | '2k' | '4k'>('1k');
   const [outputFormat, setOutputFormat] = useState<'png' | 'jpeg'>('png');
+  const [enableWebSearch, setEnableWebSearch] = useState(false);
+  const [enableImageSearch, setEnableImageSearch] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -140,7 +144,7 @@ export const NovaPage: React.FC = () => {
       throw new Error('Wavespeed API key not found. Please set it in Settings.');
     }
 
-    const response = await fetch('https://api.wavespeed.ai/api/v3/google/nano-banana-pro/edit', {
+    const response = await fetch('https://api.wavespeed.ai/api/v3/google/nano-banana-2/edit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -149,10 +153,12 @@ export const NovaPage: React.FC = () => {
       body: JSON.stringify({
         aspect_ratio: aspectRatio,
         enable_base64_output: false,
+        enable_image_search: enableImageSearch,
         enable_sync_mode: false,
+        enable_web_search: enableWebSearch,
         images: imageUrls,
         output_format: outputFormat,
-        prompt: prompt || undefined,
+        prompt: prompt.trim(),
         resolution: resolution,
       }),
     });
@@ -382,7 +388,7 @@ export const NovaPage: React.FC = () => {
     if (result?.outputs && result.outputs.length > 0) {
       const link = document.createElement('a');
       link.href = result.outputs[0];
-      link.download = `nova-edited-${aspectRatio}-${resolution}-${Date.now()}.${outputFormat}`;
+      link.download = `nano-banana-2-${aspectRatio}-${resolution}-${Date.now()}.${outputFormat}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -400,9 +406,14 @@ export const NovaPage: React.FC = () => {
       <header className="w-full px-2 sm:px-6 lg:px-8 bg-black backdrop-blur-sm border-b border-violet-500/20 fixed top-0 left-24 right-0 z-50 h-16">
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-violet-400 via-violet-500 to-violet-400 bg-clip-text text-transparent">
-              NOVA
-            </h1>
+            <div className="flex flex-col gap-0.5">
+              <h1 className="text-xl font-semibold whitespace-nowrap bg-gradient-to-r from-violet-400 via-violet-500 to-violet-400 bg-clip-text text-transparent">
+                Nova
+              </h1>
+              <span className="text-[10px] text-gray-500 font-normal tracking-wide leading-tight max-w-[min(100%,14rem)] sm:max-w-none">
+                Google Nano Banana 2 · Gemini 3.1 Flash Image
+              </span>
+            </div>
             <div className="p-2 rounded-full text-gray-400 bg-gray-800/50 flex items-center text-sm h-9 px-3">
               <i className="fas fa-wallet mr-2 text-violet-400"></i>
               {isBalanceLoading ? (
@@ -528,6 +539,10 @@ export const NovaPage: React.FC = () => {
                     <option value="9:16">9:16</option>
                     <option value="16:9">16:9</option>
                     <option value="21:9">21:9</option>
+                    <option value="1:4">1:4</option>
+                    <option value="4:1">4:1</option>
+                    <option value="1:8">1:8</option>
+                    <option value="8:1">8:1</option>
                   </select>
                 </div>
 
@@ -535,9 +550,10 @@ export const NovaPage: React.FC = () => {
                   <label className="block text-xs font-medium text-gray-300 mb-1.5">Resolution</label>
                   <select
                     value={resolution}
-                    onChange={(e) => setResolution(e.target.value as '1k' | '2k' | '4k')}
+                    onChange={(e) => setResolution(e.target.value as '0.5k' | '1k' | '2k' | '4k')}
                     className="w-full text-sm border-gray-600 rounded-lg focus:ring-violet-500 focus:border-violet-500 bg-gray-700 py-1.5 px-3 text-white"
                   >
+                    <option value="0.5k">0.5K</option>
                     <option value="1k">1K</option>
                     <option value="2k">2K</option>
                     <option value="4k">4K</option>
@@ -554,6 +570,27 @@ export const NovaPage: React.FC = () => {
                     <option value="png">PNG</option>
                     <option value="jpeg">JPEG</option>
                   </select>
+                </div>
+
+                <div className="flex flex-col gap-2 pt-1">
+                  <label className="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={enableWebSearch}
+                      onChange={(e) => setEnableWebSearch(e.target.checked)}
+                      className="rounded border-gray-600 bg-gray-700 text-violet-600 focus:ring-violet-500"
+                    />
+                    Web search (real-time context)
+                  </label>
+                  <label className="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={enableImageSearch}
+                      onChange={(e) => setEnableImageSearch(e.target.checked)}
+                      className="rounded border-gray-600 bg-gray-700 text-violet-600 focus:ring-violet-500"
+                    />
+                    Image search (real-time reference)
+                  </label>
                 </div>
               </div>
             </div>

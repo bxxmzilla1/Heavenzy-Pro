@@ -50,9 +50,10 @@ export const NovaHistorySidebar: React.FC<NovaHistorySidebarProps> = ({ onSelect
         throw new Error(errorData.message || `Failed to fetch history with status ${response.status}`);
       }
       const result = await response.json();
-      // Filter for nano-banana-pro/edit predictions
+      // Google Nano Banana 2 (Gemini 3.1 Flash Image) + legacy Nano Banana Pro
       const editPredictions = result.data.items.filter((p: Prediction) =>
-        p.model && p.model.includes('nano-banana-pro/edit')
+        p.model &&
+        (p.model.includes('nano-banana-2') || p.model.includes('nano-banana-pro/edit'))
       );
       setPredictions(editPredictions);
     } catch (err: any) {
@@ -168,7 +169,7 @@ export const NovaHistorySidebar: React.FC<NovaHistorySidebarProps> = ({ onSelect
       // Determine file extension based on output format
       let extension = pred.input?.output_format || 'png';
       
-      const filename = `nova_edit_${dateStr}_${timeStr}_${pred.id.slice(0, 8)}.${extension}`;
+      const filename = `nova_nano_edit_${dateStr}_${timeStr}_${pred.id.slice(0, 8)}.${extension}`;
 
       try {
         const response = await fetch(mediaUrl);
