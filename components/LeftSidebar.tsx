@@ -21,7 +21,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-24 bg-[#0f1115]/95 backdrop-blur-sm border-r border-white/5 flex flex-col items-center py-6 z-30">
+    <aside className="fixed left-0 top-0 h-full w-24 bg-[#0f1115]/95 backdrop-blur-sm border-r border-white/5 flex flex-col items-stretch z-30 min-h-0">
+      <div className="flex-1 min-h-0 w-full overflow-y-auto overflow-x-hidden overscroll-y-contain flex flex-col items-center py-4 px-1 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.15)_transparent]">
       {menuItems.map((item) => {
         const Icon = item.icon;
         const isActive = activeApp === item.id;
@@ -131,10 +132,8 @@ export const LeftSidebar: React.FC<LeftSidebarProps> = ({ activeApp, onAppChange
       })}
 
       {/* Divider */}
-      <div className="w-8 h-px bg-white/5 mb-6"></div>
-
-      {/* Future menu items can be added here */}
-      <div className="flex-1"></div>
+      <div className="w-8 h-px bg-white/5 my-2 shrink-0"></div>
+      </div>
     </aside>
   );
 };
