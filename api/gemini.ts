@@ -180,6 +180,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
+      case 'processContent': {
+        const { model, contents, config } = params;
+
+        if (!model) {
+          return res.status(400).json({ error: 'model is required for processContent' });
+        }
+
+        const generateOptions: any = { model, contents };
+        if (config) {
+          generateOptions.config = config;
+        }
+
+        const response = await ai.models.generateContent(generateOptions);
+
+        if (response.candidates?.[0]?.finishReason === 'SAFETY') {
+          return res.status(400).json({ error: 'Request was flagged by the safety filter.' });
+        }
+
+        if (response.promptFeedback?.blockReason) {
+          return res.status(400).json({ error: `Request blocked: ${response.promptFeedback.blockReason}` });
+        }
+
+        const responseText = response.text || null;
+
+        let imageData: string | null = null;
+        if (response.candidates?.[0]?.content?.parts) {
+          for (const part of response.candidates[0].content.parts) {
+            if (part.inlineData) {
+              imageData = part.inlineData.data;
+              break;
+            }
+          }
+        }
+
+        return res.status(200).json({ text: responseText, imageData });
+      }
+
       default:
         return res.status(400).json({ error: 'Invalid action' });
     }

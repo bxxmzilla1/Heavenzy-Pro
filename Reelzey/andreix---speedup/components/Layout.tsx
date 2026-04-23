@@ -7,11 +7,13 @@ import VideoCreator from './VideoCreator';
 import ScriptCreator from './ScriptCreator';
 import HistorySidebar from './HistorySidebar';
 import MirrorMode from './MirrorMode';
+import SettingsModal from './SettingsModal';
 
 const Layout: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState('directorMode');
   const [activeView, setActiveView] = useState('scriptCreator');
   const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [selectedHistoryVideoUrl, setSelectedHistoryVideoUrl] = useState<string | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [isBalanceLoading, setIsBalanceLoading] = useState(false);
@@ -133,9 +135,23 @@ const Layout: React.FC = () => {
               <i className="fas fa-history text-base"></i>
               <span className="text-xs font-medium hidden sm:inline">History</span>
             </button>
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="p-2 rounded-lg transition-colors flex items-center gap-2 text-gray-400 hover:text-white hover:bg-gray-800 bg-gray-800/50"
+              title="API Key Settings"
+            >
+              <i className="fas fa-cog text-base"></i>
+              <span className="text-xs font-medium hidden sm:inline">Settings</span>
+            </button>
           </div>
         </div>
       </header>
+
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        onSave={() => fetchBalance(true)}
+      />
       
       {isHistoryVisible && (
         <HistorySidebar
