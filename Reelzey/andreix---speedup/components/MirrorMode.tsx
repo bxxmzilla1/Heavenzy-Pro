@@ -153,7 +153,7 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
       }
 
       const prediction = await postResponse.json();
-      const newRequestId = prediction.id || prediction.data?.id || prediction.requestId;
+      const newRequestId = prediction.data?.id || prediction.id || prediction.requestId;
 
       if (!newRequestId) {
         setLoading(false);
@@ -165,26 +165,21 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
 
       setRequestId(newRequestId);
 
-      // Poll for result using the two-step pattern from Nova
       const pollResult = async () => {
-        const statusResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${newRequestId}`, {
+        const resultResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${newRequestId}/result`, {
           headers: { "Authorization": `Bearer ${WAVESPEED_API_KEY.trim()}` }
         });
 
-        if (!statusResponse.ok) {
-          throw new Error(`Failed to check status: ${statusResponse.statusText}`);
+        if (!resultResponse.ok) {
+          throw new Error(`Failed to check status: ${resultResponse.statusText}`);
         }
 
-        const statusData = await statusResponse.json();
-        const status = statusData.status || statusData.data?.status;
+        const resultData = await resultResponse.json();
+        const predData = resultData.data || resultData;
+        const status = predData.status;
 
         if (status === 'completed') {
-          const resultResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${newRequestId}/result`, {
-            headers: { "Authorization": `Bearer ${WAVESPEED_API_KEY.trim()}` }
-          });
-          if (!resultResponse.ok) throw new Error(`Failed to get result: ${resultResponse.statusText}`);
-          const resultData = await resultResponse.json();
-          const outputs = resultData.outputs || resultData.data?.outputs;
+          const outputs = predData.outputs;
           if (outputs && outputs.length > 0) {
             setGeneratedVideoUrl(outputs[0]);
             setIsFromHistory(false);
@@ -194,7 +189,7 @@ const MirrorMode: React.FC<MirrorModeProps> = ({ onOpenSettings, onPulseHistoryB
             if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
           }
         } else if (status === 'failed') {
-          const errMsg = statusData.error || statusData.data?.error || 'Unknown error from API.';
+          const errMsg = predData.error || 'Unknown error from API.';
           throw new Error(`Video generation failed: ${errMsg}`);
         }
       };

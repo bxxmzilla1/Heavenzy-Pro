@@ -92,7 +92,7 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
 
             setLoadingMessage("Submitting your request...");
 
-            const postResponse = await fetch('https://api.wavespeed.ai/api/v3/kwaivgi/kling-video-o1-std/image-to-video', {
+            const postResponse = await fetch('https://api.wavespeed.ai/api/v3/kwaivgi/kling-video-o1/image-to-video', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -111,7 +111,7 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
             }
 
             const prediction = await postResponse.json();
-            const requestId = prediction.id || prediction.data?.id;
+            const requestId = prediction.data?.id || prediction.id;
 
             if (!requestId) {
                 setLoading(false);
@@ -121,26 +121,21 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
                 return;
             }
 
-            // Poll for result using the same two-step pattern as Nova
             const pollResult = async () => {
-                const statusResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${requestId}`, {
+                const resultResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${requestId}/result`, {
                     headers: { "Authorization": `Bearer ${WAVESPEED_API_KEY.trim()}` }
                 });
 
-                if (!statusResponse.ok) {
-                    throw new Error(`Failed to check status: ${statusResponse.statusText}`);
+                if (!resultResponse.ok) {
+                    throw new Error(`Failed to check status: ${resultResponse.statusText}`);
                 }
 
-                const statusData = await statusResponse.json();
-                const status = statusData.status || statusData.data?.status;
+                const resultData = await resultResponse.json();
+                const predData = resultData.data || resultData;
+                const status = predData.status;
 
                 if (status === 'completed') {
-                    const resultResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${requestId}/result`, {
-                        headers: { "Authorization": `Bearer ${WAVESPEED_API_KEY.trim()}` }
-                    });
-                    if (!resultResponse.ok) throw new Error(`Failed to get result: ${resultResponse.statusText}`);
-                    const resultData = await resultResponse.json();
-                    const outputs = resultData.outputs || resultData.data?.outputs;
+                    const outputs = predData.outputs;
                     if (outputs && outputs.length > 0) {
                         setGeneratedVideoUrl(outputs[0]);
                         setLoading(false);
@@ -149,7 +144,7 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
                         if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
                     }
                 } else if (status === 'failed') {
-                    const errMsg = statusData.error || statusData.data?.error || 'Unknown error from API.';
+                    const errMsg = predData.error || 'Unknown error from API.';
                     throw new Error(`Video generation failed: ${errMsg}`);
                 }
             };
