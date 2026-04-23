@@ -26,13 +26,29 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
         }
     }, [selectedHistoryVideoUrl, clearSelectedHistoryVideoUrl]);
 
-    const convertToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve((reader.result as string).split(',')[1]);
-            reader.onerror = (error) => reject(error);
+    const uploadFile = async (file: File): Promise<string> => {
+        const apiKey = localStorage.getItem('wavespeedApiKey');
+        if (!apiKey || apiKey.trim() === '') {
+            throw new Error('Wavespeed API key not found. Please set it in Settings.');
+        }
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await fetch('https://api.wavespeed.ai/api/v3/media/upload/binary', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey.trim()}`,
+            },
+            body: formData,
         });
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ message: response.statusText }));
+            throw new Error(errorData.message || `Upload failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.code === 200 && data.data?.download_url) {
+            return data.data.download_url;
+        }
+        throw new Error('Failed to get upload URL from response');
     };
 
     const handleReset = () => {
@@ -49,8 +65,7 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
     const handleImageSelect = useCallback(async (file: File) => {
         setGeneratedVideoUrl(null);
         setError(null);
-        const base64 = await convertToBase64(file);
-        setImageData({ file, preview: URL.createObjectURL(file), base64 });
+        setImageData({ file, preview: URL.createObjectURL(file), base64: '' });
     }, []);
 
     const handleGenerateVideo = async () => {
@@ -59,30 +74,33 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
             return;
         }
 
+        const WAVESPEED_API_KEY = localStorage.getItem('wavespeedApiKey');
+        if (!WAVESPEED_API_KEY || WAVESPEED_API_KEY.trim() === '') {
+            setError("Wavespeed API key is not configured. Please add it in the Settings menu.");
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setSuccessMessage(null);
         setGeneratedVideoUrl(null);
-        setLoadingMessage("Submitting your request...");
-
-        const WAVESPEED_API_KEY = localStorage.getItem('wavespeedApiKey');
-
-        if (!WAVESPEED_API_KEY) {
-            setError("Wavespeed API key is not configured. Please add it in the Settings menu.");
-            setLoading(false);
-            return;
-        }
+        setLoadingMessage("Uploading image...");
 
         try {
+            // Upload image first to get a hosted URL (same as Nova)
+            const imageUrl = await uploadFile(imageData.file);
+
+            setLoadingMessage("Submitting your request...");
+
             const postResponse = await fetch('https://api.wavespeed.ai/api/v3/kwaivgi/kling-video-o1-std/image-to-video', {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${WAVESPEED_API_KEY}`
+                    "Authorization": `Bearer ${WAVESPEED_API_KEY.trim()}`
                 },
                 body: JSON.stringify({
                     duration: duration,
-                    image: imageData.base64,
+                    image: imageUrl,
                     prompt: prompt
                 })
             });
@@ -93,58 +111,80 @@ const VideoCreator: React.FC<VideoCreatorProps> = ({ selectedHistoryVideoUrl, cl
             }
 
             const prediction = await postResponse.json();
-            const requestId = prediction.id;
+            const requestId = prediction.id || prediction.data?.id;
 
             if (!requestId) {
-                // Instead of error, show success message and pulse history button
                 setLoading(false);
                 setLoadingMessage('');
                 setSuccessMessage("Your video is now processing and placed in the Generation History Section");
-                // Pulse history button
-                if (onPulseHistoryButton) {
-                    onPulseHistoryButton();
-                }
+                if (onPulseHistoryButton) onPulseHistoryButton();
                 return;
             }
 
+            // Poll for result using the same two-step pattern as Nova
+            const pollResult = async () => {
+                const statusResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${requestId}`, {
+                    headers: { "Authorization": `Bearer ${WAVESPEED_API_KEY.trim()}` }
+                });
+
+                if (!statusResponse.ok) {
+                    throw new Error(`Failed to check status: ${statusResponse.statusText}`);
+                }
+
+                const statusData = await statusResponse.json();
+                const status = statusData.status || statusData.data?.status;
+
+                if (status === 'completed') {
+                    const resultResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${requestId}/result`, {
+                        headers: { "Authorization": `Bearer ${WAVESPEED_API_KEY.trim()}` }
+                    });
+                    if (!resultResponse.ok) throw new Error(`Failed to get result: ${resultResponse.statusText}`);
+                    const resultData = await resultResponse.json();
+                    const outputs = resultData.outputs || resultData.data?.outputs;
+                    if (outputs && outputs.length > 0) {
+                        setGeneratedVideoUrl(outputs[0]);
+                        setLoading(false);
+                        setLoadingMessage('');
+                        if (onPulseHistoryButton) onPulseHistoryButton();
+                        if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+                    }
+                } else if (status === 'failed') {
+                    const errMsg = statusData.error || statusData.data?.error || 'Unknown error from API.';
+                    throw new Error(`Video generation failed: ${errMsg}`);
+                }
+            };
+
+            // Keep a ref to interval so we can clear it
+            const pollRef = { current: null as ReturnType<typeof setInterval> | null };
             let attempts = 0;
             const maxAttempts = 60;
-            const pollInterval = 5000;
 
-            while (attempts < maxAttempts) {
+            const runPoll = async () => {
                 attempts++;
-                setLoadingMessage(`Generating video... Please wait. (Attempt ${attempts} of ${maxAttempts})`);
-
-                await new Promise(resolve => setTimeout(resolve, pollInterval));
-
-                const getResponse = await fetch(`https://api.wavespeed.ai/api/v3/predictions/${requestId}/result`, {
-                    headers: {
-                        "Authorization": `Bearer ${WAVESPEED_API_KEY}`
-                    }
-                });
-                
-                if (getResponse.status === 202) { continue; }
-                
-                if (!getResponse.ok) {
-                    const errorData = await getResponse.json().catch(() => ({ message: getResponse.statusText }));
-                    throw new Error(`Failed to fetch video result: ${errorData.message || getResponse.statusText}`);
+                setLoadingMessage(`Generating video... (${attempts}/${maxAttempts})`);
+                try {
+                    await pollResult();
+                } catch (err: any) {
+                    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+                    setLoading(false);
+                    setLoadingMessage('');
+                    setError(err.message || "An unknown error occurred during video generation.");
                 }
-
-                const resultData = await getResponse.json();
-
-                if (resultData.status === 'completed' && resultData.outputs && resultData.outputs.length > 0) {
-                    setGeneratedVideoUrl(resultData.outputs[0]);
-                    return;
-                } else if (resultData.status === 'failed') {
-                    throw new Error(`Video generation failed: ${resultData.error || 'Unknown error from API.'}`);
+                if (attempts >= maxAttempts && pollRef.current) {
+                    clearInterval(pollRef.current);
+                    pollRef.current = null;
+                    setLoading(false);
+                    setLoadingMessage('');
+                    setError("Video generation timed out. Please try again later.");
                 }
-            }
-            throw new Error("Video generation timed out. Please try again later.");
+            };
+
+            await runPoll();
+            pollRef.current = setInterval(runPoll, 5000);
 
         } catch (err: any) {
             console.error(err);
             setError(err.message || "An unknown error occurred during video generation.");
-        } finally {
             setLoading(false);
             setLoadingMessage('');
         }
