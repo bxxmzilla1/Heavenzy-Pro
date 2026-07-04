@@ -93,7 +93,7 @@ export const analyzeMedia = async (
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-3.5-flash',
     contents: [
       {
         role: 'user',
@@ -149,7 +149,7 @@ export const removePeopleFromImage = async (
   const ai = createGoogleGenAI();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
+    model: 'gemini-3.1-flash-image',
     contents: [{
       role: 'user',
       parts: [
@@ -193,7 +193,7 @@ export const describeClothing = async (
 ): Promise<string> => {
   const ai = createGoogleGenAI();
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-3.5-flash',
     contents: [
       {
         role: 'user',
@@ -227,7 +227,7 @@ export const upscaleImage = async (
   const ai = createGoogleGenAI();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
+    model: 'gemini-3.1-flash-image',
     contents: [{
       role: 'user',
       parts: [
@@ -273,7 +273,7 @@ export const generate360Image = async (
   const ai = createGoogleGenAI();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
+    model: 'gemini-3.1-flash-image',
     contents: [{
       role: 'user',
       parts: [
@@ -341,7 +341,7 @@ The output must be a single, cohesive paragraph.`
   });
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-3.5-flash',
     contents: [
       {
         role: 'user',

@@ -14,7 +14,7 @@ export class GeminiService {
       const base64Data = base64Image.split(',')[1] || base64Image;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image',
+        model: 'gemini-3-pro-image',
         contents: {
           parts: [
             {
@@ -55,7 +55,46 @@ export class GeminiService {
       }
 
       return imageUrl;
-    } catch (error) {
+    } catch (error: any) {
+      const errorMsg = error?.message || String(error);
+      const isRetryable = errorMsg.includes('403') || 
+        errorMsg.includes('PERMISSION_DENIED') || 
+        errorMsg.includes('not found') ||
+        errorMsg.includes('NOT_FOUND') ||
+        errorMsg.includes('The AI failed to generate');
+
+      if (isRetryable) {
+        const apiKey = localStorage.getItem('geminiApiKey');
+        if (!apiKey) throw error;
+        const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
+        const base64Data = base64Image.split(',')[1] || base64Image;
+
+        const fallbackResponse = await ai.models.generateContent({
+          model: 'gemini-3.1-flash-image',
+          contents: {
+            parts: [
+              {
+                inlineData: {
+                  data: base64Data,
+                  mimeType: 'image/jpeg',
+                },
+              },
+              {
+                text: `TRANSFORM THIS PERSON'S FACE into the fictional character described below. Character Description: ${characterPrompt}`,
+              },
+            ],
+          },
+        });
+
+        if (fallbackResponse.candidates?.[0]?.content?.parts) {
+          for (const part of fallbackResponse.candidates[0].content.parts) {
+            if (part.inlineData) {
+              return `data:image/png;base64,${part.inlineData.data}`;
+            }
+          }
+        }
+      }
+
       console.error("Gemini Transformation Error:", error);
       throw error;
     }

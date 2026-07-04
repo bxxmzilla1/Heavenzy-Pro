@@ -84,19 +84,18 @@ export const generatePortrait = async (config: GenerationConfig): Promise<string
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-image-preview',
+      model: 'gemini-3-pro-image',
       contents: {
         parts: [{ text: prompt }],
       },
       config: {
         imageConfig: {
-          aspectRatio: "3:4", // Portrait aspect ratio
-          imageSize: "2K",    // High resolution request
+          aspectRatio: "3:4",
+          imageSize: "2K",
         },
       },
     });
 
-    // Iterate through parts to find the image
     const parts = response.candidates?.[0]?.content?.parts;
     if (parts) {
       for (const part of parts) {
@@ -107,7 +106,38 @@ export const generatePortrait = async (config: GenerationConfig): Promise<string
     }
     
     throw new Error("No image data found in response");
-  } catch (error) {
+  } catch (error: any) {
+    const errorMsg = error?.message || String(error);
+    const isPermissionError = errorMsg.includes('403') || 
+      errorMsg.includes('PERMISSION_DENIED') || 
+      errorMsg.includes('The caller does not have permission') ||
+      errorMsg.includes('Publisher Model') ||
+      errorMsg.includes('not found') ||
+      errorMsg.includes('NOT_FOUND');
+
+    if (isPermissionError) {
+      const fallbackResponse = await ai.models.generateContent({
+        model: 'gemini-3.1-flash-image',
+        contents: {
+          parts: [{ text: prompt }],
+        },
+        config: {
+          imageConfig: {
+            aspectRatio: "3:4",
+          },
+        },
+      });
+
+      const fallbackParts = fallbackResponse.candidates?.[0]?.content?.parts;
+      if (fallbackParts) {
+        for (const part of fallbackParts) {
+          if (part.inlineData && part.inlineData.data) {
+            return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`;
+          }
+        }
+      }
+    }
+
     console.error("Generation failed:", error);
     throw error;
   }

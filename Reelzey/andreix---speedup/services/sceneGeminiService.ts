@@ -44,7 +44,7 @@ const createGoogleGenAI = (): GoogleGenAI => {
 export async function enhancePrompt(prompt: string): Promise<string> {
   try {
     const ai = createGoogleGenAI();
-    const model = 'gemini-3-flash-preview';
+    const model = 'gemini-3.5-flash';
     const enhancerPrompt = `You are a creative prompt engineer. Enhance the following user prompt for an AI image-to-scene generator. Make it more descriptive, evocative, and detailed, focusing on potential actions, emotions, and subtle movements. Keep it concise, under 50 words.
     
     User prompt: "${prompt}"
@@ -72,7 +72,7 @@ export async function generateScene(
 ): Promise<string> {
   try {
     const ai = createGoogleGenAI();
-    const model = 'gemini-3-flash-preview';
+    const model = 'gemini-3.5-flash';
     
     let systemPrompt = `You are an expert scene director for short-form video. Your task is to generate a detailed script for a ${duration}-second video clip based on an image, a mood, a camera view, and an optional user prompt.
     - The output must be a description of continuous action.

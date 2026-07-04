@@ -61,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         
         try {
           await validationAI.models.generateContent({
-            model: 'gemini-3-flash-preview',
+            model: 'gemini-3.5-flash',
             contents: { parts: [{ text: 'Confirm API access' }] },
             config: {
               maxOutputTokens: 1,
@@ -79,7 +79,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Attempt with Gemini 3 Pro first
         try {
           const response = await ai.models.generateContent({
-            model: 'gemini-3-pro-image-preview',
+            model: 'gemini-3-pro-image',
             contents: { parts },
             config: {
               imageConfig: {
@@ -130,12 +130,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           const isPermissionError = errorMsg.includes('403') || 
             errorMsg.includes('PERMISSION_DENIED') || 
             errorMsg.includes('The caller does not have permission') ||
-            errorMsg.includes('Publisher Model');
+            errorMsg.includes('Publisher Model') ||
+            errorMsg.includes('not found') ||
+            errorMsg.includes('NOT_FOUND');
 
           if (isPermissionError) {
             try {
               const fallbackResponse = await ai.models.generateContent({
-                model: 'gemini-2.5-flash-image',
+                model: 'gemini-3.1-flash-image',
                 contents: { parts },
                 config: {
                   imageConfig: {
