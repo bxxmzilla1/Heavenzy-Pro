@@ -55,7 +55,20 @@ const callGeminiAPI = async (action: string, params: any): Promise<any> => {
   }
 
   if (!response.ok) {
-    throw new Error(data.error || 'API request failed');
+    const err = data?.error;
+    let message = 'API request failed';
+    if (typeof err === 'string') {
+      message = err;
+      try {
+        const nested = JSON.parse(err);
+        if (nested?.error?.message) message = nested.error.message;
+      } catch {
+        // plain string error
+      }
+    } else if (err && typeof err === 'object' && typeof err.message === 'string') {
+      message = err.message;
+    }
+    throw new Error(message);
   }
 
   return data;

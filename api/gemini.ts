@@ -20,6 +20,53 @@ const safetySettings = [
   },
 ];
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Pull a human-readable message out of Google GenAI error payloads. */
+const extractErrorMessage = (error: unknown): string => {
+  const raw = (error as any)?.message || String(error ?? 'Unknown error');
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed?.error?.message) return parsed.error.message;
+  } catch {
+    // message may embed JSON after a prefix
+  }
+  const match = raw.match(/\{[\s\S]*"error"[\s\S]*\}/);
+  if (match) {
+    try {
+      const parsed = JSON.parse(match[0]);
+      if (parsed?.error?.message) return parsed.error.message;
+    } catch {
+      // ignore
+    }
+  }
+  return raw;
+};
+
+const isCapacityError = (msg: string): boolean => {
+  const m = msg.toLowerCase();
+  return (
+    msg.includes('503') ||
+    msg.includes('UNAVAILABLE') ||
+    m.includes('high demand') ||
+    m.includes('overloaded') ||
+    m.includes('temporarily unavailable') ||
+    msg.includes('429') ||
+    m.includes('resource_exhausted') ||
+    m.includes('resource exhausted') ||
+    m.includes('try again later')
+  );
+};
+
+const extractImageData = (response: any): string | null => {
+  const parts = response?.candidates?.[0]?.content?.parts;
+  if (!parts) return null;
+  for (const part of parts) {
+    if (part.inlineData?.data) return part.inlineData.data;
+  }
+  return null;
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -75,111 +122,105 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       case 'generate': {
         const { parts, aspectRatio } = params;
-        
-        // Attempt with Gemini 3 Pro first
-        try {
-          const response = await ai.models.generateContent({
+
+        // Cascade through image models when the preferred one is overloaded / unavailable.
+        const modelAttempts: Array<{
+          model: string;
+          imageConfig: Record<string, string>;
+        }> = [
+          {
             model: 'gemini-3-pro-image',
-            contents: { parts },
-            config: {
-              imageConfig: {
-                imageSize: '2K',
-                aspectRatio: aspectRatio,
-              },
-              safetySettings,
-            },
-          });
+            imageConfig: { imageSize: '2K', aspectRatio },
+          },
+          {
+            model: 'gemini-3.1-flash-image',
+            imageConfig: { aspectRatio },
+          },
+          {
+            model: 'gemini-3.1-flash-lite-image',
+            imageConfig: { aspectRatio },
+          },
+          {
+            model: 'gemini-2.5-flash-image',
+            imageConfig: { aspectRatio },
+          },
+        ];
 
-          // Process response
-          if (response.candidates?.[0]?.finishReason === 'SAFETY') {
-            return res.status(400).json({ error: 'Generation failed. The request or response was flagged by the safety filter.' });
-          }
-          
-          if (response.promptFeedback?.blockReason) {
-            return res.status(400).json({ error: `Generation blocked: ${response.promptFeedback.blockReason}` });
-          }
+        let lastErrorMsg = '';
 
-          let imageData: string | null = null;
-          if (response.candidates?.[0]?.content?.parts) {
-            for (const part of response.candidates[0].content.parts) {
-              if (part.inlineData) {
-                imageData = part.inlineData.data;
-                break;
-              }
-            }
-          }
+        for (let i = 0; i < modelAttempts.length; i++) {
+          const { model, imageConfig } = modelAttempts[i];
+          const maxRetries = 2;
 
-          if (imageData) {
-            return res.status(200).json({ imageData });
-          }
-
-          const responseText = response.text;
-          if (responseText) {
-            return res.status(400).json({ error: 'The model could not generate an image from your request.' });
-          }
-
-          const finishReason = response.candidates?.[0]?.finishReason;
-          if (finishReason && finishReason !== 'STOP') {
-            return res.status(400).json({ error: `Image generation was interrupted: ${finishReason}` });
-          }
-
-          return res.status(400).json({ error: 'The model was unable to generate an image.' });
-        } catch (error: any) {
-          // Fallback to Gemini 2.5 Flash on permission errors
-          const errorMsg = error?.message || String(error);
-          const isPermissionError = errorMsg.includes('403') || 
-            errorMsg.includes('PERMISSION_DENIED') || 
-            errorMsg.includes('The caller does not have permission') ||
-            errorMsg.includes('Publisher Model') ||
-            errorMsg.includes('not found') ||
-            errorMsg.includes('NOT_FOUND');
-
-          if (isPermissionError) {
+          for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
-              const fallbackResponse = await ai.models.generateContent({
-                model: 'gemini-3.1-flash-image',
+              const response = await ai.models.generateContent({
+                model,
                 contents: { parts },
                 config: {
-                  imageConfig: {
-                    aspectRatio: aspectRatio,
-                  },
+                  imageConfig,
                   safetySettings,
                 },
               });
 
-              let imageData: string | null = null;
-              if (fallbackResponse.candidates?.[0]?.content?.parts) {
-                for (const part of fallbackResponse.candidates[0].content.parts) {
-                  if (part.inlineData) {
-                    imageData = part.inlineData.data;
-                    break;
-                  }
-                }
+              if (response.candidates?.[0]?.finishReason === 'SAFETY') {
+                return res.status(400).json({
+                  error: 'Generation failed. The request or response was flagged by the safety filter.',
+                });
               }
 
+              if (response.promptFeedback?.blockReason) {
+                return res.status(400).json({
+                  error: `Generation blocked: ${response.promptFeedback.blockReason}`,
+                });
+              }
+
+              const imageData = extractImageData(response);
               if (imageData) {
-                return res.status(200).json({ imageData });
+                return res.status(200).json({ imageData, model });
               }
 
-              return res.status(400).json({ error: 'The model was unable to generate an image.' });
-            } catch (fallbackError: any) {
-              return res.status(500).json({ error: fallbackError?.message || 'Generation failed' });
+              // No image — try next model rather than failing hard on the first.
+              lastErrorMsg = 'The model was unable to generate an image.';
+              break;
+            } catch (error: unknown) {
+              const errorMsg = extractErrorMessage(error);
+              lastErrorMsg = errorMsg;
+
+              if (errorMsg.toLowerCase().includes('quota') && !isCapacityError(errorMsg)) {
+                return res.status(429).json({
+                  error: 'API quota exceeded. Please check your project billing status.',
+                });
+              }
+              if (errorMsg.includes('API key not valid') || errorMsg.includes('leaked')) {
+                return res.status(401).json({ error: 'The provided API key is not valid.' });
+              }
+              if (errorMsg.toLowerCase().includes('expired')) {
+                return res.status(401).json({ error: 'Your API key has expired.' });
+              }
+
+              // Retry once on capacity spikes before falling through to the next model.
+              if (isCapacityError(errorMsg) && attempt < maxRetries - 1) {
+                await sleep(800 * (attempt + 1));
+                continue;
+              }
+
+              // Fall through to next model for capacity / permission / not-found errors.
+              break;
             }
           }
-
-          // Handle other errors
-          if (errorMsg.includes('quota')) {
-            return res.status(429).json({ error: 'API quota exceeded. Please check your project billing status.' });
-          }
-          if (errorMsg.includes('API key not valid') || errorMsg.includes('leaked')) {
-            return res.status(401).json({ error: 'The provided API key is not valid.' });
-          }
-          if (errorMsg.includes('expired')) {
-            return res.status(401).json({ error: 'Your API key has expired.' });
-          }
-
-          return res.status(500).json({ error: errorMsg || 'An unexpected error occurred with the AI model.' });
         }
+
+        if (isCapacityError(lastErrorMsg)) {
+          return res.status(503).json({
+            error:
+              'Image models are temporarily overloaded. Please try again in a moment.',
+          });
+        }
+
+        return res.status(500).json({
+          error: lastErrorMsg || 'An unexpected error occurred with the AI model.',
+        });
       }
 
       case 'processContent': {

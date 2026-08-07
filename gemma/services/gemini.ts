@@ -108,14 +108,20 @@ export const generatePortrait = async (config: GenerationConfig): Promise<string
     throw new Error("No image data found in response");
   } catch (error: any) {
     const errorMsg = error?.message || String(error);
-    const isPermissionError = errorMsg.includes('403') || 
+    const isRetryable = errorMsg.includes('403') || 
       errorMsg.includes('PERMISSION_DENIED') || 
       errorMsg.includes('The caller does not have permission') ||
       errorMsg.includes('Publisher Model') ||
       errorMsg.includes('not found') ||
-      errorMsg.includes('NOT_FOUND');
+      errorMsg.includes('NOT_FOUND') ||
+      errorMsg.includes('503') ||
+      errorMsg.includes('UNAVAILABLE') ||
+      errorMsg.toLowerCase().includes('high demand') ||
+      errorMsg.toLowerCase().includes('overloaded') ||
+      errorMsg.includes('429') ||
+      errorMsg.toLowerCase().includes('resource_exhausted');
 
-    if (isPermissionError) {
+    if (isRetryable) {
       const fallbackResponse = await ai.models.generateContent({
         model: 'gemini-3.1-flash-image',
         contents: {

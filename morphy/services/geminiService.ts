@@ -61,7 +61,13 @@ export class GeminiService {
         errorMsg.includes('PERMISSION_DENIED') || 
         errorMsg.includes('not found') ||
         errorMsg.includes('NOT_FOUND') ||
-        errorMsg.includes('The AI failed to generate');
+        errorMsg.includes('The AI failed to generate') ||
+        errorMsg.includes('503') ||
+        errorMsg.includes('UNAVAILABLE') ||
+        errorMsg.toLowerCase().includes('high demand') ||
+        errorMsg.toLowerCase().includes('overloaded') ||
+        errorMsg.includes('429') ||
+        errorMsg.toLowerCase().includes('resource_exhausted');
 
       if (isRetryable) {
         const apiKey = localStorage.getItem('geminiApiKey');
